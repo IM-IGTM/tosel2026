@@ -121,7 +121,7 @@ window.onload = function () {
     },
     { q: "We waited for the train. Its ____ was late.", a: "arrival", type: 2 },
     {
-      q: "You need a ticket for ____. You cannot go in first.",
+      q: "You need a ticket for _____. You cannot go in first.",
       a: "entry",
       type: 2,
     },
