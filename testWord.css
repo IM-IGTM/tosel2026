@@ -1,0 +1,174 @@
+/* =========================
+   공통: 전체 배경 & 레이아웃 (어린이 맞춤)
+   ========================= */
+body {
+  margin: 0;
+  padding: 20px;
+  font-family:
+    "Malgun Gothic",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  /* 부드럽고 따뜻한 옐로우/베이지 톤 배경 */
+  background-color: #fefae0;
+  background-image:
+    radial-gradient(#fccd04 0.5px, transparent 0.5px),
+    radial-gradient(#fccd04 0.5px, #fefae0 0.5px);
+  background-size: 20px 20px;
+  background-position:
+    0 0,
+    10px 10px;
+
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* =========================
+   대기실 메인 박스 스타일
+   ========================= */
+.welcome-box {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 24px; /* 더 폭신하고 둥글게 */
+  box-shadow: 0 12px 32px rgba(221, 151, 10, 0.15);
+  border: 4px solid #faedcd; /* 부드러운 테두리 선 */
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popUp {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 타이틀 디자인 */
+.main-title {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 32px;
+  color: #d4a373;
+  font-weight: 800;
+  text-shadow: 2px 2px 0px #fefae0;
+}
+
+.sub-title {
+  display: block;
+  font-size: 16px;
+  color: #9a7b56;
+  font-weight: 600;
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+/* 이름 입력창 그룹 */
+.input-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.input-group label {
+  font-size: 18px;
+  font-weight: 700;
+  color: #4a5759;
+}
+
+.input-group input[type="text"] {
+  flex: 1;
+  max-width: 220px;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 3px solid #e07a5f;
+  border-radius: 14px;
+  outline: none;
+  text-align: center;
+  font-weight: 600;
+  color: #3d348b;
+  background-color: #fffaf0;
+  transition: all 0.2s ease;
+}
+
+.input-group input[type="text"]:focus {
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(224, 122, 95, 0.2);
+}
+
+/* 레벨 선택 안내 */
+.select-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #a8dadc;
+  background: #457b9d;
+  display: inline-block;
+  padding: 4px 16px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+/* 레벨 버튼 정렬 */
+.level-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 귀여운 푸딩 스타일 버튼들 */
+.btn-level {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #cccccc; /* 입체감 효과 */
+  transition: all 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 레벨별 알록달록 테마 컬러 */
+.btn-level.starter {
+  background: #ffb703;
+  box-shadow: 0 6px 0 #fb8500;
+}
+.btn-level.prestarter {
+  background: #2a9d8f;
+  box-shadow: 0 6px 0 #264653;
+}
+.btn-level.basic {
+  background: #e63946;
+  box-shadow: 0 6px 0 #1d3557;
+}
+
+/* 버튼 누르는 액션 효과 (누르면 쏙 들어감) */
+.btn-level:hover {
+  transform: translateY(-2px);
+}
+
+.btn-level:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 transparent !important;
+}

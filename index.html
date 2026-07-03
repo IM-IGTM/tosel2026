@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TOSEL VOCA - Ebenezer English</title>
+    <link rel="stylesheet" href="testWord.css" />
+    <script src="indexTest.js" defer></script>
+  </head>
+  <body>
+    <div class="welcome-box">
+      <!-- 귀여운 메인 타이틀 -->
+      <h2 class="main-title">
+        ✨ TOSEL VOCA ✨
+        <span class="sub-title">Ebenezer English</span>
+      </h2>
+
+      <!-- 이름 입력 및 레벨 선택 폼 -->
+      <form class="login-form" onsubmit="return false;">
+        <div class="input-group">
+          <label for="studentName"> NAME :</label>
+          <input
+            type="text"
+            id="studentName"
+            placeholder="이름을 적어주세요!"
+            autocomplete="off"
+          />
+        </div>
+
+        <p class="select-label">Choose to LEVEL</p>
+        <div class="level-buttons">
+          <button type="button" class="btn-level starter" onclick="starter()">
+            🌟 Starter
+          </button>
+          <button
+            type="button"
+            class="btn-level prestarter"
+            onclick="preStartTest()"
+          >
+            🌱 Pre-Starter
+          </button>
+          <button type="button" class="btn-level basic" onclick="basic()">
+            🔥 Basic
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
