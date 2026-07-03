@@ -114,7 +114,11 @@ window.onload = function () {
       type: 2,
     },
     { q: "The fish is in the ____. It cannot swim away.", a: "net", type: 2 },
-    { q: "I want to sit there.", a: "remove", type: 2 },
+    {
+      q: "Please ____ your bag from the chair. I want to sit there.",
+      a: "remove",
+      type: 2,
+    },
     { q: "We waited for the train. Its ____ was late.", a: "arrival", type: 2 },
     {
       q: "You need a ticket for ____. You cannot go in first.",
