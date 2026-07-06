@@ -83,138 +83,146 @@ window.onload = function () {
 
     // 2유형 (빈칸 단문 - 15초)
     {
-      q: "I put my pens in a small ____. Now they are safe in my bag.",
+      q: "I put my pens in a small ____.\n Now they are safe in my bag.",
       a: "case",
       type: 2,
     },
     {
-      q: "I do not know the way. I will ____ my friend.",
+      q: "I do not know the way.\n I will ____ my friend.",
       a: "follow",
       type: 2,
     },
     {
-      q: "Korean is my first ____. I also study English.",
+      q: "Korean is my first ____.\n I also study English.",
       a: "language",
       type: 2,
     },
-    { q: "These shoes are too ____. My feet hurt.", a: "tight", type: 2 },
+    { q: "These shoes are too ____.\n My feet hurt.", a: "tight", type: 2 },
     {
-      q: "Can you ____ this math problem? The answer is 12.",
+      q: "Can you ____ this math problem?\n The answer is 12.",
       a: "solve",
       type: 2,
     },
     {
-      q: "My phone does not work. There is a ____ with it.",
+      q: "My phone does not work.\n There is a ____ with it.",
       a: "problem",
       type: 2,
     },
     {
-      q: "Write your name on the ____. Then put it on your bag.",
+      q: "Write your name on the ____.\n Then put it on your bag.",
       a: "label",
       type: 2,
     },
-    { q: "The fish is in the ____. It cannot swim away.", a: "net", type: 2 },
+    { q: "The fish is in the ____.\n It cannot swim away.", a: "net", type: 2 },
     {
-      q: "Please ____ your bag from the chair. I want to sit there.",
+      q: "Please ____ your bag from the chair.\n I want to sit there.",
       a: "remove",
       type: 2,
     },
-    { q: "We waited for the train. Its ____ was late.", a: "arrival", type: 2 },
     {
-      q: "You need a ticket for _____. You cannot go in first.",
+      q: "We waited for the train.\n Its ____ was late.",
+      a: "arrival",
+      type: 2,
+    },
+    {
+      q: "You need a ticket for _____.\n You cannot go in first.",
       a: "entry",
       type: 2,
     },
     {
-      q: "Water is important for ____. People and animals need it.",
+      q: "Water is important for ____.\n People and animals need it.",
       a: "life",
       type: 2,
     },
     {
-      q: "Use a ____ for the cake. Do not use your hands.",
+      q: "Use a ____ for the cake.\n Do not use your hands.",
       a: "fork",
       type: 2,
     },
     {
-      q: "We are in the hotel ____. Dad is talking to the hotel worker.",
+      q: "We are in the hotel ____.\n Dad is talking to the hotel worker.",
       a: "lobby",
       type: 2,
     },
     {
-      q: "The classroom is too ____. I cannot hear the teacher.",
+      q: "The classroom is too ____.\n I cannot hear the teacher.",
       a: "noisy",
       type: 2,
     },
     {
-      q: "I ate eggs and ____ this morning. The meat was very good.",
+      q: "I ate eggs and ____ this morning.\n The meat was very good.",
       a: "bacon",
       type: 2,
     },
     {
-      q: "I thought the box was empty. It was ____ full.",
+      q: "I thought the box was empty.\n It was ____ full.",
       a: "actually",
       type: 2,
     },
     {
-      q: "The cookie is a star. Its ____ is not a circle.",
+      q: "The cookie is a star.\n Its ____ is not a circle.",
       a: "shape",
       type: 2,
     },
-    { q: "We went on a big ship. It was my first ____.", a: "cruise", type: 2 },
     {
-      q: "Take this ____ after dinner. It will help you feel better.",
+      q: "We went on a big ship.\n It was my first ____.",
+      a: "cruise",
+      type: 2,
+    },
+    {
+      q: "Take this ____ after dinner.\n It will help you feel better.",
       a: "medicine",
       type: 2,
     },
 
     // 3유형 (빈칸 장문/복합문 - 20초)
     {
-      q: "You must be careful to use the right ____ing. He ____ed them with an OK sign.",
+      q: "You must be careful to use the right ____ing.\n He ____ed them with an OK sign.",
       a: "greet",
       type: 3,
     },
     {
-      q: '____s by the nickname "Assocer." Messi was very good at soccer, so a soccer ____ i',
+      q: '____s by the nickname "Assocer."\n Messi was very good at soccer, so a soccer ____ i',
       a: "team",
       type: 3,
     },
     {
-      q: "You can hear his mother ____ing at him. His mother ____ed at him to stop, but he didn't",
+      q: "You can hear his mother ____ing at him.\n His mother ____ed at him to stop, but he didn't",
       a: "yell",
       type: 3,
     },
     {
-      q: "a lion and kills many people in the ____. Then all the young men in the ____ will lov",
+      q: "a lion and kills many people in the ____.\n Then all the young men in the ____ will lov",
       a: "village",
       type: 3,
     },
     {
-      q: "Nearby, there was a boy who played the ____. He played the ____ as he walked.",
+      q: "Nearby, there was a boy who played the ____.\n He played the ____ as he walked.",
       a: "violin",
       type: 3,
     },
     {
-      q: "She asked two ducks to carry her ____ the sky. They flew up ____ the air.",
+      q: "She asked two ducks to carry her ____ the sky.\n They flew up ____ the air.",
       a: "into",
       type: 3,
     },
     {
-      q: "George Washington loved dogs a ____. She travels a ____ and learns many language",
+      q: "George Washington loved dogs a ____.\n She travels a ____ and learns many language",
       a: "lot",
       type: 3,
     },
     {
-      q: "ars old, she couldn't do hard ____ anymore. His father ____ed in a factory, and his",
+      q: "ars old, she couldn't do hard ____ anymore.\n His father ____ed in a factory, and his",
       a: "work",
       type: 3,
     },
     {
-      q: "ok a big drink from the cup, but it was ____ full. We ____ use his creative invention t",
+      q: "ok a big drink from the cup, but it was ____ full.\n We ____ use his creative invention t",
       a: "still",
       type: 3,
     },
     {
-      q: "eft home and worked for a wealthy family on their ____. The donkey decides to leave",
+      q: "eft home and worked for a wealthy family on their ____.\n The donkey decides to leave",
       a: "farm",
       type: 3,
     },
@@ -333,10 +341,21 @@ window.onload = function () {
     currentQuestion < questions.length ? renderQuestion() : finishExam();
   }
 
+  // 문제 결과에서 문제 영역 지우기
   function finishExam() {
     if (countdownInterval) clearInterval(countdownInterval);
-    document.querySelector(".quiz-container").style.display = "none";
-    document.querySelector(".examOver").style.display = "block";
+
+    // [수정] quiz-container 대신 헤더와 보기를 포함한 전체 영역(.test-panel-wrapper)을 숨기기
+    const testPanel = document.querySelector(".test-panel-wrapper");
+    if (testPanel) {
+      testPanel.style.display = "none";
+    }
+
+    // 시험 종료 문구 박스
+    const examOverPanel = document.querySelector(".examOver");
+    if (examOverPanel) {
+      examOverPanel.style.display = "block";
+    }
   }
 
   // -----------------------------
