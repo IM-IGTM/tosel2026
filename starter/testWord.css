@@ -1,470 +1,359 @@
-/* =========================
-   공통: 전체 배경 & 레이아웃
-   ========================= */
+/* ===================================================
+   1. 공통: 전체 배경 & 레이아웃 리셋
+   20260706 수정-
+   =================================================== */
 body {
   margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
-    "Helvetica Neue", sans-serif;
-  background: #f3f4f6;
+  padding: 40px 20px;
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    sans-serif;
+  background: #f4f7fa; /* 화사하고 부드러운 클라우드 블루 배경 */
   min-height: 100vh;
   display: flex;
-  justify-content: center; /* 가로 가운데 */
-  align-items: center; /* 세로 가운데 */
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 }
 
-/* =========================
-   퀴즈 + 정답 패널 레이아웃
-   ========================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* 패딩 계산 꼬임 방지 */
+}
+
+/* 메인 프레임 */
 .page {
   display: flex;
-  gap: 24px; /* 왼쪽/오른쪽 간격 */
+  gap: 32px;
   align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px; /* 시험에 딱 집중되는 최적의 너비 */
 }
 
-/* 왼쪽: 퀴즈 박스 */
-.quiz-container {
+/* 시험지 영역 전체 감싸는 박스 */
+.test-panel-wrapper {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  background: #ffffff;
-  padding: 24px 20px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  width: 1300px; /* 넓은 가로 영역 */
-  box-sizing: border-box;
-}
-
-/* 학생 이름 표시 */
-#studentName {
-  min-height: 30px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-}
-
-/* 문제 라벨 */
-.label,
-#questionLabel {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 8px 0 12px;
-  color: #111827;
-}
-
-.choice-row {
-  width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-}
-
-.choice-row button {
-  width: 220px;
-  height: auto; /* 내용 늘어나면 자동 높이 */
-  min-height: 56px; /* 기본 높이는 유지 */
-  padding: 10px;
-  font-size: 20px;
-  line-height: 1.3;
-  white-space: normal; /* 줄바꿈 허용 */
-  word-break: keep-all; /* 단어 단위로 줄바꿈(영어는 자연스럽게) */
-  overflow: visible; /* 숨기지 않음 */
-  border-radius: 12px;
-  background: #f7f7f7;
-  border: 1px solid #ccc;
-}
-
-/* 퀴즈에서 쓰는 버튼 스타일 (가로 + 크게) */
-.quiz-container button {
-  flex: 1; /* 가능한 공간을 나눠 가짐 */
-  min-width: 120px; /* 너무 좁아지지 않게 */
-  padding: 35px 60px; /* 클릭 영역 크게 */
-  margin-bottom: 0;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: center;
-  transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.quiz-container button.selected {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #1d4ed8;
-}
-
-.quiz-container button:hover {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-}
-
-.quiz-container button:active {
-  transform: translateY(1px);
-  box-shadow: none;
-}
-
-/* 오른쪽 정답 패널 */
-.answer-panel {
-  background: #ffffff;
-  padding: 16px 16px 20px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  min-width: 260px;
-  box-sizing: border-box;
-}
-
-.answer-panel h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-
-/* 정답 테이블 (가로형) */
-.answer-table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  table-layout: fixed;
-  display: table; /* 혹시 깨졌을 경우를 대비한 리셋 */
 }
 
-.answer-table tr {
-  display: table-row;
-}
-
-.answer-table th,
-.answer-table td {
-  display: table-cell;
-  border: 1px solid #e5e7eb;
-  padding: 6px 8px;
-  text-align: center;
-  word-break: keep-all;
-}
-
-.answer-table thead th {
-  background: #f9fafb;
-  font-weight: 600;
-}
-
-/* 문제 title 칸 */
-.question-title-cell {
-  font-weight: 600;
-}
-
-/* 선택한 답 칸 */
-.answer {
-  color: #111827;
-  font-weight: 600;
-}
-
-/* =========================
-   (신버전) TOESEL 스타일 시험 화면
-   ========================= */
-
-/* 전체 레이아웃: 왼쪽 설명 + 오른쪽 시험 */
-.exam-page {
-  display: flex;
-  gap: 32px;
-  width: 1100px;
-  max-width: 95vw;
-}
-
-/* -------- 왼쪽 컨트롤 패널 -------- */
-.control-panel {
-  width: 260px;
-  background: #f8fafc;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  padding: 20px 18px;
-  box-sizing: border-box;
-}
-
-.badge-running {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #b91c1c, #dc2626);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 20px;
-}
-
-.control-section {
-  font-size: 13px;
-  color: #111827;
-}
-
-.control-title {
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.mt-24 {
-  margin-top: 24px;
-}
-
-.control-keys {
-  display: flex;
-  gap: 8px;
-}
-
-.key-box {
-  width: 40px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  background: #fff;
-  overflow: hidden;
-  font-size: 11px;
-  text-align: center;
-}
-
-.key-top {
-  background: #e5e7eb;
-  padding: 2px 0;
-}
-
-.key-bottom {
-  padding: 4px 0;
-}
-
-.space-box {
-  margin-top: 8px;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px dashed #cbd5e1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-/* -------- 오른쪽 시험 패널 -------- */
-.test-panel {
-  flex: 1;
-  background: #f9fafb;
-  border-radius: 18px;
-  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.16);
-  padding: 18px 18px 22px;
-  box-sizing: border-box;
-}
-
-/* 상단 헤더 */
+/* ===================================================
+   2. 상단 헤더 정보 (타이머 / 배지 / 영역 이름)
+   =================================================== */
 .test-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .timer {
+  background: #ffe3d1;
+  color: #c2410c;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 8px 18px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: #e0f2fe;
-  color: #0369a1;
-  padding: 6px 10px;
-  border-radius: 999px;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.part-badge {
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.category-title {
+  flex: 1;
+  background: #eef2f6;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+/* ===================================================
+   3. 중앙 문제 카드 메인 박스 (학사 나오는 곳)
+   =================================================== */
+.quiz-container {
+  background: #fff6ed; /* 실제 시험 느낌의 살구 베이지 톤 */
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  min-height: 300px;
+  justify-content: space-between;
+  border: 1px solid #fed7aa;
+}
+
+/* 상단 지시문 바 */
+.instruction-bar {
+  width: 100%;
+  background: #ffffff;
+  border: 2px solid #3b82f6;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e3a8a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.info-icon {
+  position: absolute;
+  right: 12px;
+  background: #3b82f6;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
 }
 
-.timer-icon {
+/* 메인 큰 글씨 단어 (예: 학사, 학생 등) */
+#questionLabel {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  margin: 36px 0;
+  white-space: pre-line;
+  text-align: center;
+  letter-spacing: -1px;
+  line-height: 1.4;
+}
+
+/* 카드 하단 데코레이션 */
+.card-footer-deco {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #64748b;
   font-size: 14px;
 }
 
-.question-number {
-  background: #2563eb;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 15px;
-  min-width: 46px;
+.dots {
+  display: flex;
+  gap: 6px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #cbd5e1;
+  border-radius: 50%;
+}
+.dot.active {
+  background: #ea580c;
+}
+
+/* 안내문 */
+.submit-hint {
   text-align: center;
-}
-
-.instruction {
-  flex: 1;
-  background: #ffffff;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 13px;
-  color: #374151;
-  border: 1px solid #e5e7eb;
-}
-
-/* 문제 카드 */
-.question-card {
-  margin-top: 6px;
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 32px 26px 20px;
-  box-sizing: border-box;
-  min-height: 280px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.student-name {
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.question-kor {
-  text-align: center;
-  font-size: 32px;
-  font-weight: 700;
-  color: #111827;
-  margin: 30px 0 40px;
-}
-
-/* 보기 버튼들 (신버전) */
-.choices-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.choice-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  background: #f3f4f6;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  padding: 8px 6px;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease,
-    box-shadow 0.15s ease, transform 0.05s ease;
-}
-
-.choice-index {
-  font-size: 11px;
-  color: #6b7280;
-}
-
-.choice-text {
-  font-size: 13px;
+  font-size: 14px;
+  color: #64748b;
+  margin: 16px 0;
   font-weight: 500;
 }
 
-/* hover / active */
-.choice-btn:hover {
-  background: #e0f2fe;
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+/* ===================================================
+   4. [★ 핵심 개선] 세로 와이드형 보기 목록 버튼 전체 스타일
+   =================================================== */
+.choice-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
 }
 
-.choice-btn:active {
-  transform: translateY(1px);
-  box-shadow: none;
+/* 보기 버튼 기본 틀 */
+.choice-list-wrapper .choice-row-btn {
+  width: 100% !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 18px 24px !important; /* 위아래 간격을 넉넉하게 주어 뚱뚱하게 */
+  min-height: 76px !important; /* 안정적인 버튼 두께 고정 */
+  display: flex !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: all 0.1s ease-in-out !important;
+  position: relative !important;
+  outline: none !important;
 }
 
-/* 정답 선택됐을 때 JS에서 .selected 추가 */
-.choice-btn.selected {
-  background: #2563eb;
-  border-color: #1d4ed8;
-  color: #ffffff;
+.choice-list-wrapper .choice-row-btn,
+.choice-list-wrapper .choice-row-btn .opt-text {
+  font-size: 20px !important; /* 보기 글씨 크기*/
+  font-weight: 700 !important; /* 도톰하고 선명하게 */
+  color: #334155 !important; /* 기본 짙은 회색 글씨 */
 }
 
-.choice-btn.selected .choice-text,
-.choice-btn.selected .choice-index {
-  color: #ffffff;
+/* 마우스 올렸을 때(Hover) 효과 */
+.choice-list-wrapper .choice-row-btn:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  transform: translateY(-1px) !important;
 }
 
-/* 하단 힌트 텍스트 */
-.hint-text {
-  font-size: 11px;
-  color: #9ca3af;
-  text-align: right;
+/* 키보드로 선택되었을 때 또는 정답 처리되었을 때 (연초록 효과) */
+.choice-list-wrapper .choice-row-btn.selected {
+  background: #f0fdf4 !important; /* 연초록 바탕 */
+  border: 2px solid #22c55e !important; /* 초록색 진한 테두리 */
 }
 
-.kbd {
-  display: inline-block;
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid #d1d5db;
-  background: #f9fafb;
-  font-family: inherit;
-  font-size: 10px;
+.choice-list-wrapper .choice-row-btn.selected,
+.choice-list-wrapper .choice-row-btn.selected .opt-text {
+  color: #15803d !important; /* 글씨색도 초록색으로 변경 */
 }
 
-/* 틀린 답 표시용 스타일 */
+/* 보기 내부 알파벳 동그라미 배지 (A, B, C, D) */
+.choice-list-wrapper .choice-row-btn .badge {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 16px !important;
+  flex-shrink: 0 !important; /* 찌그러짐 철저 방지 */
+}
+
+/* 선택되었을 때의 알파벳 배지 반전 색상 */
+.choice-list-wrapper .choice-row-btn.selected .badge {
+  background: #22c55e !important;
+  border-color: #22c55e !important;
+  color: white !important;
+}
+
+/* 오른쪽 끝 체크 아이콘 위치 정의 */
+.choice-list-wrapper .choice-row-btn .check-icon {
+  position: absolute !important;
+  right: 24px !important;
+  color: #22c55e !important;
+  font-weight: 700 !important;
+  font-size: 24px !important;
+}
+
+/* 구버전 코드 무력화용 매칭 차단 */
+.choice-row,
+.quiz-container button {
+  display: none !important;
+}
+.choice-list-wrapper button {
+  display: flex !important;
+}
+
+/* ===================================================
+   5. 시험 완료 및 결과창 영역
+   =================================================== */
+.examOver {
+  background: #ffffff;
+  padding: 40px 32px;
+  border-radius: 24px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.examOver p {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin: 0 0 24px 0;
+}
+
+.resultOk {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+  transition: transform 0.1s ease;
+}
+.resultOk:active {
+  transform: scale(0.98);
+}
+
+/* 결과 리스트 테이블 패널 */
+.answer-panel {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+.result-summary p {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 6px 0;
+}
+.summary-notice {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.answer-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  table-layout: fixed;
+}
+.answer-table td,
+.answer-table th {
+  border: 1px solid #e2e8f0;
+  padding: 12px 10px;
+  text-align: center;
+}
+.answer-table thead th {
+  background: #f8fafc;
+  font-weight: 600;
+}
 .answer-table .wrong-cell {
-  background: #fee2e2; /* 연한 빨간 배경 */
-  color: #b91c1c; /* 진한 빨간 글씨 */
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
   font-weight: 700;
 }
-
+/* 문제 이미지 스타일 가이드 */
 .question-img {
-  width: 200px;
-  height: 200px;
-  object-fit: contain;
-  margin: 10px 0 15px;
-}
-
-/* 시험 종료 문구 박스 */
-.examOver {
-  display: none; /* JS에서 block으로 켜줌 */
-  background: #ffffff;
-  padding: 24px 28px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-  text-align: center;
-  margin-left: 24px; /* 퀴즈 박스랑 약간 띄우기 */
-}
-
-.examOver p {
-  margin-top: 0;
-  margin-bottom: 16px;
-  font-weight: 600;
-}
-
-/* 결과보기 버튼 */
-.resultOk {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  padding: 10px 22px;
-  border-radius: 999px;
-  border: none;
-
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-
-  cursor: pointer;
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.45);
-  transition: transform 0.08s ease, box-shadow 0.12s ease, opacity 0.15s ease;
-}
-
-.resultOk:hover {
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.55);
-  opacity: 0.96;
-}
-
-.resultOk:active {
-  transform: translateY(1px);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
-}
-
-#questionLabel {
-  white-space: pre-line; /* 줄바꿈(\n) 표시 */
-  text-align: center; /* 가운데 정렬 */
-  line-height: 1.8; /* 줄 간격 증가 */
+  max-width: 180px; /* 이미지 최대 가로 너비 설정 */
+  max-height: 180px; /* 이미지 최대 세로 높이 설정 */
+  object-fit: contain; /* 원본 비율을 깨뜨리지 않고 이쁘게 맞춤 */
+  margin: 15px 0 5px 0; /* 위아래 텍스트들과 부드러운 여백 정돈 */
+  border-radius: 12px; /* 이미지 모서리도 둥글둥글하게 통일 */
 }
