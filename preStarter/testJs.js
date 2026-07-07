@@ -297,8 +297,7 @@ window.onload = function () {
             window.location.hostname === "127.0.0.1" ||
             window.location.hostname === "localhost"
           ) {
-            nextSrc =
-              window.location.origin + "/" + q.img + extensions[extIndex];
+            nextSrc = window.location.origin + q.img + extensions[extIndex];
           }
           // 2. 깃허브 Pages 등 온라인 서버 환경인 경우 (중간 레포 경로 tosel2026 포함)
           else if (window.location.protocol.startsWith("http")) {
@@ -308,7 +307,7 @@ window.onload = function () {
             );
             nextSrc =
               window.location.origin +
-              basePath +
+              //basePath +
               // "/" +
               q.img +
               extensions[extIndex];
