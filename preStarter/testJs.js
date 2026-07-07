@@ -1,12 +1,12 @@
 window.onload = function () {
   // -----------------------------
-  // 0. 학생 이름 (결과에서 사용)
+  // 0. 학생 이름 및 초기 설정
   // -----------------------------
   const urlParams = new URLSearchParams(window.location.search);
   const studentNameValue = urlParams.get("studentName") || "이름 정보 없음";
 
   // -----------------------------
-  // 공통: 배열 섞기
+  // 공통 함수: 배열 섞기
   // -----------------------------
   function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -17,82 +17,82 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 1. 원본 데이터 (100문제)
+  // 1. 원본 데이터 (Pre-starter)
   // -----------------------------
   const rawData = [
-    // 1유형: 그림보고 맞추기 (이미지 O)
-    { q: "시험", a: "test", type: 1 },
-    { q: "심다", a: "plant", type: 1 },
-    { q: "새", a: "bird", type: 1 },
-    { q: "헬멧", a: "helmet", type: 1 },
-    { q: "지도", a: "map", type: 1 },
-    { q: "창문", a: "window", type: 1 },
-    { q: "강", a: "river", type: 1 },
-    { q: "읽다", a: "read", type: 1 },
-    { q: "남자형제", a: "brother", type: 1 },
-    { q: "삼각형", a: "triangle", type: 1 },
-    { q: "간식", a: "snack", type: 1 },
-    { q: "발가락", a: "toe", type: 1 },
-    { q: "팔", a: "arm", type: 1 },
-    { q: "(발로) 차다", a: "kick", type: 1 },
-    { q: "이름", a: "name", type: 1 },
-    { q: "쓰다", a: "write", type: 1 },
-    { q: "자전거", a: "bike", type: 1 },
-    { q: "예술가", a: "artist", type: 1 },
-    { q: "아기", a: "baby", type: 1 },
-    { q: "곰", a: "bear", type: 1 },
-    { q: "귀", a: "ear", type: 1 },
-    { q: "돼지", a: "pig", type: 1 },
-    { q: "포도", a: "grape", type: 1 },
-    { q: "무용수", a: "dancer", type: 1 },
-    { q: "개구리", a: "frog", type: 1 },
-    { q: "그릇", a: "bowl", type: 1 },
-    { q: "계란", a: "egg", type: 1 },
-    { q: "사슴", a: "deer", type: 1 },
-    { q: "공", a: "ball", type: 1 },
-    { q: "식탁, 테이블", a: "table", type: 1 },
-    { q: "캠프", a: "camp", type: 1 },
-    { q: "접시", a: "dish", type: 1 },
-    { q: "신선한", a: "fresh", type: 1 },
+    // 1유형: 그림보고 맞추기 (이미지 단어 - 제한시간 10초)
     { q: "우유", a: "milk", type: 1 },
-    { q: "스토브", a: "stove", type: 1 },
-    { q: "큰", a: "big", type: 1 },
-    { q: "돕다", a: "help", type: 1 },
-    { q: "목", a: "neck", type: 1 },
-    { q: "가족", a: "family", type: 1 },
-    { q: "서다", a: "stand", type: 1 },
-    { q: "노란색", a: "yellow", type: 1 },
-    { q: "사자", a: "lion", type: 1 },
-    { q: "생일", a: "birthday", type: 1 },
-    { q: "냄비", a: "pot", type: 1 },
-    { q: "호랑이", a: "tiger", type: 1 },
-    { q: "고양이", a: "cat", type: 1 },
-    { q: "도시", a: "city", type: 1 },
-    { q: "케이크", a: "cake", type: 1 },
-    { q: "달리다", a: "run", type: 1 },
-    { q: "달, 월", a: "month", type: 1 },
-    { q: "건너다, 가로지르다", a: "cross", type: 1 },
-    { q: "나무", a: "tree", type: 1 },
-    { q: "자다", a: "sleep", type: 1 },
+    { q: "가수", a: "singer", type: 1 },
+    { q: "남자형제", a: "brother", type: 1 },
+    { q: "바나나", a: "banana", type: 1 },
     { q: "길, 도로", a: "road", type: 1 },
-    { q: "보라색", a: "purple", type: 1 },
-    { q: "침대", a: "bed", type: 1 },
-    { q: "얼룩말", a: "zebra", type: 1 },
-    { q: "아픈", a: "sick", type: 1 },
-    { q: "밥, 쌀", a: "rice", type: 1 },
-    { q: "머리카락", a: "hair", type: 1 },
-    { q: "마시다", a: "drink", type: 1 },
-    { q: "(잠에서) 깨다", a: "wake", type: 1 },
-    { q: "주스", a: "juice", type: 1 },
-    { q: "웃다", a: "smile", type: 1 },
-    { q: "복싱", a: "boxing", type: 1 },
-    { q: "꽃병", a: "vase", type: 1 },
-    { q: "열둘(12)", a: "twelve", type: 1 },
-    { q: "원", a: "circle", type: 1 },
-    { q: "빨간색", a: "red", type: 1 },
-    { q: "뚱뚱한", a: "fat", type: 1 },
+    { q: "선생님", a: "teacher", type: 1 },
+    { q: "야구", a: "baseball", type: 1 },
+    { q: "목", a: "neck", type: 1 },
+    { q: "자", a: "ruler", type: 1 },
+    { q: "어린이", a: "child", type: 1 },
+    { q: "여자형제", a: "sister", type: 1 },
+    { q: "시계", a: "clock", type: 1 },
+    { q: "교회", a: "church", type: 1 },
+    { q: "테니스", a: "tennis", type: 1 },
+    { q: "아기", a: "baby", type: 1 },
+    { q: "간호사", a: "nurse", type: 1 },
+    { q: "지도", a: "map", type: 1 },
+    { q: "물", a: "water", type: 1 },
+    { q: "배", a: "pear", type: 1 },
+    { q: "책", a: "book", type: 1 },
+    { q: "칠판", a: "board", type: 1 },
+    { q: "직업", a: "job", type: 1 },
+    { q: "치즈", a: "cheese", type: 1 },
+    { q: "가게, 상점", a: "store", type: 1 },
+    { q: "영화", a: "movie", type: 1 },
+    { q: "햄버거", a: "hamburger", type: 1 },
+    { q: "간식", a: "snack", type: 1 },
+    { q: "과일", a: "fruit", type: 1 },
+    { q: "수프", a: "soup", type: 1 },
+    { q: "아버지", a: "father", type: 1 },
+    { q: "발", a: "foot", type: 1 },
+    { q: "셋(3)", a: "three", type: 1 },
+    { q: "창문", a: "window", type: 1 },
+    { q: "공", a: "ball", type: 1 },
+    { q: "헬멧", a: "helmet", type: 1 },
+    { q: "입술", a: "lip", type: 1 },
+    { q: "케이크", a: "cake", type: 1 },
+    { q: "연필", a: "pencil", type: 1 },
+    { q: "고기", a: "meat", type: 1 },
+    { q: "스키", a: "ski", type: 1 },
+    { q: "뒷면", a: "back", type: 1 },
+    { q: "몸", a: "body", type: 1 },
+    { q: "사탕", a: "candy", type: 1 },
+    { q: "아침", a: "morning", type: 1 },
+    { q: "할머니", a: "grandmother", type: 1 },
+    { q: "도시", a: "city", type: 1 },
+    { q: "방망이", a: "bat", type: 1 },
+    { q: "눈", a: "eye", type: 1 },
+    { q: "얼굴", a: "face", type: 1 },
+    { q: "입", a: "mouth", type: 1 },
+    { q: "복숭아", a: "peach", type: 1 },
+    { q: "장갑", a: "glove", type: 1 },
+    { q: "골프", a: "golf", type: 1 },
+    { q: "빵", a: "bread", type: 1 },
+    { q: "코", a: "nose", type: 1 },
+    { q: "손", a: "hand", type: 1 },
+    { q: "반[학급]", a: "class", type: 1 },
+    { q: "농부", a: "farmer", type: 1 },
+    { q: "버스", a: "bus", type: 1 },
+    { q: "오리", a: "duck", type: 1 },
+    { q: "샌드위치", a: "sandwich", type: 1 },
+    { q: "비행기", a: "plane", type: 1 },
+    { q: "사자", a: "lion", type: 1 },
+    { q: "이", a: "teeth", type: 1 },
+    { q: "친구", a: "friend", type: 1 },
+    { q: "무릎", a: "knee", type: 1 },
+    { q: "책상", a: "desk", type: 1 },
+    { q: "개미", a: "ant", type: 1 },
+    { q: "사과", a: "apple", type: 1 },
+    { q: "자전거", a: "bike", type: 1 },
 
-    // 2유형: 뜻보고 맞추기 (이미지 X)
+    // 2유형: 뜻보고 맞추기 (이미지 X - 제한시간 15초)
     { q: "프라이팬", a: "pan", type: 2 },
     { q: "자", a: "ruler", type: 2 },
     { q: "초록색", a: "green", type: 2 },
@@ -114,7 +114,7 @@ window.onload = function () {
     { q: "햄버거", a: "hamburger", type: 2 },
     { q: "갈색", a: "brown", type: 2 },
 
-    // 3유형: 문장+그림보고 맞추기 (이미지 O)
+    // 3유형: 문장+그림보고 맞추기 (이미지 O - 제한시간 20초)
     { q: "My family loves to _______.", a: "travel", type: 3 },
     { q: "Let's feel the fresh _______.", a: "air", type: 3 },
     { q: "There is a dog _______ the chair.", a: "under", type: 3 },
@@ -127,16 +127,14 @@ window.onload = function () {
     { q: "She wants to be a ______.", a: "singer", type: 3 },
   ];
 
-  // 모든 정답 리스트 (오답 추출용)
   const allAnswerPool = rawData.map((d) => d.a);
 
   // -----------------------------
-  // 2. 최종 시험 문제 배열 생성 (자동 보기 구성)
+  // 2. 최종 시험 문제 배열 생성 (경로 최적화)
   // -----------------------------
   const questions = rawData.map((item) => {
-    // 사지선다를 위해 현재 정답 제외하고 3개만 랜덤 추출
     const wrongOnes = shuffle(
-      allAnswerPool.filter((ans) => ans !== item.a)
+      allAnswerPool.filter((ans) => ans !== item.a),
     ).slice(0, 3);
     const options = shuffle([item.a, ...wrongOnes]);
 
@@ -145,13 +143,13 @@ window.onload = function () {
       options: options,
       correctIndex: options.indexOf(item.a),
       type: item.type,
-      // 1유형과 3유형만 이미지 경로 생성, 2유형은 null
-      img: item.type === 1 || item.type === 3 ? `img/${item.a}.png` : null,
+      // 상대 경로 포맷 최적화 고정
+      img: item.type === 1 ? `/preStarter/img/${item.a}` : null,
     };
   });
 
   // -----------------------------
-  // 3. 정답 테이블 동적 생성
+  // 3. 정답 테이블 동적 생성 (결과창 구조화)
   // -----------------------------
   const tbody = document.querySelector(".answer-table tbody");
   if (tbody) {
@@ -190,12 +188,11 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 4. 시험 상태 변수
+  // 4. 시험 상태 변수 제어
   // -----------------------------
   let currentQuestion = 0;
   let selectedIndex = null;
-  const TIMER_DURATION = 20;
-  let timeLeft = TIMER_DURATION;
+  let timeLeft = 10;
   let countdownInterval = null;
   let correctCount = 0;
 
@@ -205,16 +202,12 @@ window.onload = function () {
     document.querySelector(".two"),
     document.querySelector(".three"),
     document.querySelector(".four"),
-    // 사지선다이므로 .five 제외
   ];
   const timerSpan = document.getElementById("timer-sec");
 
-  // -----------------------------
-  // 5. 핵심 로직 함수
-  // -----------------------------
-  function startTimer() {
+  function startTimer(duration) {
     if (countdownInterval) clearInterval(countdownInterval);
-    timeLeft = TIMER_DURATION;
+    timeLeft = duration;
     if (timerSpan) timerSpan.textContent = timeLeft;
 
     countdownInterval = setInterval(() => {
@@ -239,50 +232,97 @@ window.onload = function () {
     currentQuestion < questions.length ? renderQuestion() : finishExam();
   }
 
+  // 전체 화면 노출 상태 리셋 제어
+  function finishExam() {
+    if (countdownInterval) clearInterval(countdownInterval);
+
+    const testPanel = document.querySelector(".test-panel-wrapper");
+    if (testPanel) testPanel.style.display = "none";
+
+    document.querySelector(".examOver").style.display = "block";
+  }
+
+  // -----------------------------
+  // 5. 핵심: 문제 출력 및 이미지 체인 스위칭 로직
+  // -----------------------------
   function renderQuestion() {
     const q = questions[currentQuestion];
     if (!q) return;
 
     selectedIndex = null;
-    buttons.forEach((btn) => btn && btn.classList.remove("selected"));
 
-    if (questionLabel) {
-      questionLabel.innerHTML = q.title.replace(/\n/g, "<br>");
-    }
+    // 선택 효과 보정 초기화
+    buttons.forEach((btn) => {
+      if (btn) {
+        btn.classList.remove("selected");
+        const chk = btn.querySelector(".check-icon");
+        if (chk) chk.remove();
+      }
+    });
 
     const imgTag = document.getElementById("questionImage");
 
+    // 이전 상태 이미지 경로 전면 소거 및 가림 처리
+    if (imgTag) {
+      imgTag.src = "";
+      imgTag.onerror = null;
+      imgTag.style.display = "none";
+    }
+
+    // 1유형 텍스트 잔상 소거 및 유형 제어
     if (questionLabel) {
       if (q.type === 1) {
-        // 유형 1(그림보고 맞추기)인 경우 텍스트 라벨을 - 로 표시
-        questionLabel.textContent = "-";
+        questionLabel.innerHTML = "";
+        questionLabel.textContent = "";
       } else {
-        // 그 외 유형은 기존처럼 텍스트 출력 (줄바꿈 지원)
         questionLabel.innerHTML = q.title.replace(/\n/g, "<br>");
       }
     }
 
-    if (imgTag) {
-      if (q.img) {
-        imgTag.src = q.img;
-        imgTag.style.display = "block";
-        imgTag.onerror = () => {
+    // 파일 로드 꼬임 방지 연속 체인 스캐너 연동
+    if (imgTag && q.img) {
+      imgTag.style.display = "block";
+
+      const extensions = [".png", ".jpg", ".PNG", ".JPG"];
+      let extIndex = 0;
+
+      function tryNextImage() {
+        if (extIndex < extensions.length) {
+          const nextSrc = q.img + extensions[extIndex];
+          extIndex++;
+          imgTag.src = nextSrc;
+        } else {
           imgTag.style.display = "none";
-        };
-      } else {
-        imgTag.style.display = "none";
+          imgTag.onerror = null;
+        }
       }
+
+      imgTag.onerror = tryNextImage;
+      tryNextImage();
     }
 
-    // 사지선다이므로 만약 HTML에 5번 버튼이 있다면 숨김 처리
     const btnFive = document.querySelector(".five");
     if (btnFive) btnFive.style.display = "none";
 
+    // 보기 주입 (.opt-text 호환성 유지)
     q.options.forEach((opt, idx) => {
-      if (buttons[idx]) buttons[idx].textContent = idx + 1 + ". " + opt;
+      const btn = buttons[idx];
+      if (btn) {
+        const textSpan = btn.querySelector(".opt-text");
+        if (textSpan) {
+          textSpan.textContent = opt;
+        } else {
+          btn.textContent = opt;
+        }
+      }
     });
 
-    startTimer();
+    // 유형별 제한 시간 스펙 지정 (1유형: 10초 / 2유형: 15초 / 3유형: 20초)
+    let duration = 10;
+    if (q.type === 2) duration = 15;
+    if (q.type === 3) duration = 20;
+
+    startTimer(duration);
   }
 
   function handleAnswer(choiceIndex) {
@@ -304,16 +344,10 @@ window.onload = function () {
     currentQuestion < questions.length ? renderQuestion() : finishExam();
   }
 
-  function finishExam() {
-    if (countdownInterval) clearInterval(countdownInterval);
-    document.querySelector(".quiz-container").style.display = "none";
-    document.querySelector(".examOver").style.display = "block";
-  }
-
   // -----------------------------
-  // 6. 이벤트 및 초기화
+  // 6. 단축키 인터랙션 및 결과지 출력 (멀티 페이지)
   // -----------------------------
-  const keyToIndex = { 1: 0, 2: 1, 3: 2, 4: 3 }; // 5번 제외
+  const keyToIndex = { 1: 0, 2: 1, 3: 2, 4: 3 };
 
   document.addEventListener("keydown", function (e) {
     if (currentQuestion >= questions.length) return;
@@ -332,10 +366,13 @@ window.onload = function () {
     if (idx !== undefined) {
       selectedIndex = idx;
       buttons.forEach((btn, i) => {
-        if (btn)
-          i === idx
-            ? btn.classList.add("selected")
-            : btn.classList.remove("selected");
+        if (btn) {
+          if (i === idx) {
+            btn.classList.add("selected");
+          } else {
+            btn.classList.remove("selected");
+          }
+        }
       });
     }
   });
@@ -355,18 +392,39 @@ window.onload = function () {
     document.getElementById("result-total").textContent = questions.length;
 
     const element = document.querySelector(".answer-panel");
-    setTimeout(() => {
-      html2canvas(element).then((canvas) => {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF("p", "mm", "a4");
-        const imgData = canvas.toDataURL("image/png");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
 
-        const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-        pdf.save(`${dateStr}_${studentNameValue}_결과.pdf`);
-      });
+    // 멀티 페이지 가로 누수 없는 PDF 인쇄 제어 모듈
+    setTimeout(() => {
+      html2canvas(element, { backgroundColor: "#ffffff", useCORS: true }).then(
+        (canvas) => {
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF("p", "mm", "a4");
+          const imgData = canvas.toDataURL("image/png");
+
+          const imgWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          let heightLeft = imgHeight;
+          let position = 0;
+
+          pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+
+          while (heightLeft > 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+
+          const dateStr = new Date()
+            .toISOString()
+            .slice(0, 10)
+            .replace(/-/g, "");
+          pdf.save(`${dateStr}_${studentNameValue}_결과.pdf`);
+        },
+      );
     }, 500);
   };
 

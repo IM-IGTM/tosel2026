@@ -1,66 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="testJs.js" defer></script>
-    <!-- PDF 생성용 라이브러리 추가 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
     <link rel="stylesheet" href="testWord.css" />
-    <title>Document</title>
+    <title>TOSEL VOCA Test</title>
   </head>
   <body>
-    <div class="page">
-      <!-- 왼쪽: 퀴즈 영역 -->
-      <div class="quiz-container">
-        <div id="timerBox">남은 시간: <span id="timer-sec">20</span>초</div>
-
-        <div class="label" id="questionLabel">학생</div>
-
-        <!-- 단어 이미지 영역 -->
-        <img id="questionImage" class="question-img" src="" alt="문제 이미지" />
-
-        <div class="choice-row">
-          <button class="one">1. student</button>
-          <button class="two">2. boy</button>
-          <button class="three">3. girl</button>
-          <button class="four">4. rose</button>
-          <button class="five">5. red</button>
+    <div class="page" id="page">
+      <div class="test-panel-wrapper">
+        <div class="test-header">
+          <div class="timer">
+            <span class="timer-icon">🕒</span>
+            <span id="timer-sec">2.3</span> sec
+          </div>
+          <div class="part-badge">Part A</div>
+          <div class="category-title">Vocabulary by Meaning</div>
         </div>
-        <div class="hint-text">
-          press <span class="kbd">SPACE</span> to proceed to the next question.
+
+        <div class="quiz-container">
+          <div class="instruction-bar">
+            알맞은 단어를 고르세요.
+            <span class="info-icon">?</span>
+          </div>
+
+          <img
+            id="questionImage"
+            class="question-img"
+            src=""
+            alt="문제 이미지"
+            style="display: none"
+          />
+
+          <div class="question-word" id="questionLabel">학사</div>
+
+          <div class="card-footer-deco">
+            <span>🔍</span>
+            <div class="dots">
+              <span class="dot"></span><span class="dot active"></span
+              ><span class="dot"></span>
+            </div>
+            <span>➕</span>
+          </div>
+        </div>
+
+        <div class="submit-hint">
+          답안을 선택한 후 Space 또는 Enter 키를 눌러 제출하세요.
+        </div>
+
+        <div class="choice-list-wrapper">
+          <button class="one choice-row-btn">
+            <span class="badge">A</span> <span class="opt-text">master</span>
+          </button>
+          <button class="two choice-row-btn">
+            <span class="badge">B</span> <span class="opt-text">scholar</span>
+          </button>
+          <button class="three choice-row-btn selected">
+            <span class="badge">C</span> <span class="opt-text">bachelor</span>
+            <span class="check-icon">✓</span>
+          </button>
+          <button class="four choice-row-btn">
+            <span class="badge">D</span> <span class="opt-text">diploma</span>
+          </button>
         </div>
       </div>
 
       <div class="examOver" style="display: none">
-        <p style="font-size: 20px; color: #0000ff">
-          수고하셨습니다. 시험이 종료되었습니다.
-        </p>
+        <p>수고하셨습니다. 시험이 종료되었습니다.</p>
         <button class="resultOk" id="resultOk" onClick="resultOk()">
           결과보기
         </button>
       </div>
+
       <div class="answer-panel" style="display: none">
         <h3>시험 결과</h3>
-
         <div class="result-summary">
           <p>이름: <span id="result-name"></span></p>
           <p>
             점수: <span id="result-correct">0</span> /
             <span id="result-total">0</span>
           </p>
-          <p style="font-size: 12px; color: #6b7280">
+          <p class="summary-notice">
             * 빨간색으로 표시된 칸은 틀린 문제입니다.
           </p>
         </div>
-
         <hr />
         <table class="answer-table">
           <thead></thead>
           <tbody></tbody>
-          <!-- tbody는 비워두기 -->
         </table>
       </div>
     </div>
