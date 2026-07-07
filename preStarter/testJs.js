@@ -301,14 +301,17 @@ window.onload = function () {
           }
           // 2. 깃허브 Pages 등 온라인 서버 환경인 경우 (중간 레포 경로 tosel2026 포함)
           else if (window.location.protocol.startsWith("http")) {
-            const basePath = window.location.pathname.substring(
-              0,
-              window.location.pathname.lastIndexOf("/"),
-            );
+            const firstSlashIdx = window.location.pathname.indexOf("/", 1);
+            const repoPath =
+              firstSlashIdx !== -1
+                ? window.location.pathname.substring(0, firstSlashIdx)
+                : window.location.pathname;
+
+            //q.img(preStarter/img/단어)
             nextSrc =
               window.location.origin +
-              //basePath +
-              // "/" +
+              repoPath +
+              "/" +
               q.img +
               extensions[extIndex];
           }
