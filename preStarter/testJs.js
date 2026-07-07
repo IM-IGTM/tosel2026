@@ -297,30 +297,21 @@ window.onload = function () {
             window.location.hostname === "127.0.0.1" ||
             window.location.hostname === "localhost"
           ) {
-            nextSrc = window.location.origin + q.img + extensions[extIndex];
+            // 주소창 바로 뒤에 preStarter가 붙음
+            nextSrc =
+              window.location.origin + "/" + q.img + extensions[extIndex];
           }
-          // 2. 깃허브 Pages 등 온라인 서버 환경인 경우 (중간 레포 경로 tosel2026 포함)
-          else if (window.location.protocol.startsWith("http")) {
-            const firstSlashIdx = window.location.pathname.indexOf("/", 1);
-            const repoPath =
-              firstSlashIdx !== -1
-                ? window.location.pathname.substring(0, firstSlashIdx)
-                : window.location.pathname;
-
-            //q.img(preStarter/img/단어)
+          // 2. 깃허브 Pages 등 실제 온라인 배포 서버 환경인 경우
+          else {
+            // 주소창 중간에 tosel2026 경로를 강제로 명시하여 조립함
             nextSrc =
               window.location.origin +
-              repoPath +
-              "/" +
+              "/tosel2026/" +
               q.img +
               extensions[extIndex];
           }
-          // 3. 그 외 단순 파일 실행 환경 (file://)
-          else {
-            nextSrc = "./" + q.img + extensions[extIndex];
-          }
 
-          console.log(`[이미지 로드 시도] 주소: ${nextSrc}`); // 주소 조립 확인용 로그
+          console.log(`[이미지 로드 시도] 주소: ${nextSrc}`); // 콘솔 확인용 로그
 
           extIndex++;
           imgTag.src = nextSrc;
