@@ -279,7 +279,9 @@ window.onload = function () {
       }
     }
 
-    // 파일 로드 꼬임 방지 연속 체인 스캐너 연동
+    // ------------------------------------------------===
+    //   이미지 로드
+    // ------------------------------------------------===
     if (imgTag && q.img) {
       imgTag.style.display = "block";
 
@@ -288,7 +290,36 @@ window.onload = function () {
 
       function tryNextImage() {
         if (extIndex < extensions.length) {
-          const nextSrc = q.img + extensions[extIndex];
+          let nextSrc = "";
+
+          // 1. 로컬 라이브 서버 환경인 경우 (127.0.0.1 또는 localhost)
+          if (
+            window.location.hostname === "127.0.0.1" ||
+            window.location.hostname === "localhost"
+          ) {
+            nextSrc =
+              window.location.origin + "/" + q.img + extensions[extIndex];
+          }
+          // 2. 깃허브 Pages 등 온라인 서버 환경인 경우 (중간 레포 경로 tosel2026 포함)
+          else if (window.location.protocol.startsWith("http")) {
+            const basePath = window.location.pathname.substring(
+              0,
+              window.location.pathname.lastIndexOf("/"),
+            );
+            nextSrc =
+              window.location.origin +
+              basePath +
+              // "/" +
+              q.img +
+              extensions[extIndex];
+          }
+          // 3. 그 외 단순 파일 실행 환경 (file://)
+          else {
+            nextSrc = "./" + q.img + extensions[extIndex];
+          }
+
+          console.log(`[이미지 로드 시도] 주소: ${nextSrc}`); // 주소 조립 확인용 로그
+
           extIndex++;
           imgTag.src = nextSrc;
         } else {
