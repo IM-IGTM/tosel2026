@@ -285,7 +285,7 @@ window.onload = function () {
     if (imgTag && q.img) {
       imgTag.style.display = "block";
 
-      const extensions = [".png", ".jpg", ".PNG", ".JPG"];
+      const extensions = [".jpg"];
       let extIndex = 0;
 
       function tryNextImage() {
