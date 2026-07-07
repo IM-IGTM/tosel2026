@@ -182,17 +182,17 @@ window.onload = function () {
       type: 3,
     },
     {
-      q: '____s by the nickname "Assocer."\n Messi was very good at soccer, so a soccer ____ i',
+      q: "____s by the nickname Assocer.\n Messi was very good at soccer,\n so a soccer ____ in Spain helped pay for his medicine.",
       a: "team",
       type: 3,
     },
     {
-      q: "You can hear his mother ____ing at him.\n His mother ____ed at him to stop, but he didn't",
+      q: "You can hear his mother ____ing at him.\n His mother ____ed at him to stop, but he didn't listen.",
       a: "yell",
       type: 3,
     },
     {
-      q: "a lion and kills many people in the ____.\n Then all the young men in the ____ will lov",
+      q: "a lion and kills many people in the ____.\n Then all the young men in the ____ will love me!",
       a: "village",
       type: 3,
     },
@@ -207,22 +207,22 @@ window.onload = function () {
       type: 3,
     },
     {
-      q: "George Washington loved dogs a ____.\n She travels a ____ and learns many language",
+      q: "George Washington loved dogs a ____.\n She travels a ____ and learns many languages.",
       a: "lot",
       type: 3,
     },
     {
-      q: "ars old, she couldn't do hard ____ anymore.\n His father ____ed in a factory, and his",
+      q: "ars old, she couldn't do hard ____ anymore.\n His father ____ed in a factory, and his mother cleaned houses.",
       a: "work",
       type: 3,
     },
     {
-      q: "ok a big drink from the cup, but it was ____ full.\n We ____ use his creative invention t",
+      q: "ok a big drink from the cup, but it was ____ full.\n We ____ use his creative invention today.",
       a: "still",
       type: 3,
     },
     {
-      q: "eft home and worked for a wealthy family on their ____.\n The donkey decides to leave",
+      q: "eft home and worked for a wealthy family on their ____.\n The donkey decides to leave the ____.",
       a: "farm",
       type: 3,
     },
@@ -451,19 +451,47 @@ window.onload = function () {
     document.getElementById("result-total").textContent = questions.length;
 
     // PDF 자동 저장
+    // ------------------------------------------------===
+    // [수정] PDF 자동 저장 (결과창 전체가 잘림 없이 멀티 페이지로 저장됨)
+    // ------------------------------------------------===
     setTimeout(() => {
       const element = document.querySelector(".answer-panel");
-      html2canvas(element).then((canvas) => {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF("p", "mm", "a4");
-        const imgData = canvas.toDataURL("image/png");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
 
-        const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-        pdf.save(`${today}_${studentNameValue}_결과.pdf`);
-      });
+      // 배경색이 투명하게 밀리는 것을 방지하기 위해 백그라운드 지정
+      html2canvas(element, { backgroundColor: "#ffffff", useCORS: true }).then(
+        (canvas) => {
+          const { jsPDF } = window.jspdf;
+
+          // A4 가로/세로 기본 규격 정보 설정 (단위: mm)
+          const pdf = new jsPDF("p", "mm", "a4");
+          const imgData = canvas.toDataURL("image/png");
+
+          const imgWidth = pdf.internal.pageSize.getWidth(); // A4 가로 너비 (210mm)
+          const pageHeight = pdf.internal.pageSize.getHeight(); // A4 세로 높이 (297mm)
+
+          // 픽셀 단위를 mm 단위 비율로 변환하여 캡처본의 실제 PDF 출력 높이 계산
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          let heightLeft = imgHeight; // 출력하고 남은 높이
+          let position = 0; // Y축 출력 시작 위치
+
+          // 첫 번째 페이지 이미지 주입
+          pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+
+          // 캡처 영역이 A4 한 장 높이보다 길면 반복해서 새 페이지를 만들고 이어 붙임
+          while (heightLeft > 0) {
+            position = heightLeft - imgHeight; // 이전 페이지 끝단 위치로 좌표 이동
+            pdf.addPage(); // 새로운 A4 페이지 추가
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+
+          // 파일명 날짜 지정 및 저장
+          const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+          pdf.save(`${today}_${studentNameValue}_결과.pdf`);
+        },
+      );
     }, 500);
   };
 
