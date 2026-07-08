@@ -355,8 +355,8 @@ body {
 /* 이미지가 생성되어 들어왔을 때만 적용되는 스타일 */
 .question-img,
 #questionImage {
-  max-width: 240%;
-  max-height: 240px;
+  max-width: 300%;
+  max-height: 300px;
   object-fit: contain;
   margin-bottom: 15px; /* 이미지 아래쪽 간격만 딱 잡아줌 */
   display: block;
