@@ -182,7 +182,7 @@ window.onload = function () {
       type: 3,
     },
     {
-      q: "Later, British school boys called the ____s by the nickname Assocer.\n Messi was very good at soccer,\n so a soccer ____ in Spain helped pay for his medicine.",
+      q: "Later, British school boys called the ____s\n by the nickname Assocer.\n Messi was very good at soccer,\n so a soccer ____ in Spain helped pay for his medicine.",
       a: "team",
       type: 3,
     },
