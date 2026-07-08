@@ -17,10 +17,10 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 1. 원본 데이터 (Pre-starter)
+  // 1. 원본 데이터 (Pre-starter 기준)
   // -----------------------------
   const rawData = [
-    // 1유형: 그림보고 맞추기 (이미지 단어 - 제한시간 10초)
+    // 1유형: 그림보고 맞추기 (이미지 O - 제한시간 10초)
     { q: "우유", a: "milk", type: 1 },
     { q: "가수", a: "singer", type: 1 },
     { q: "남자형제", a: "brother", type: 1 },
@@ -93,44 +93,44 @@ window.onload = function () {
     { q: "자전거", a: "bike", type: 1 },
 
     // 2유형: 뜻보고 맞추기 (이미지 X - 제한시간 15초)
-    { q: "프라이팬", a: "pan", type: 2 },
-    { q: "자", a: "ruler", type: 2 },
-    { q: "초록색", a: "green", type: 2 },
-    { q: "시간", a: "time", type: 2 },
-    { q: "연필", a: "pencil", type: 2 },
-    { q: "비행기", a: "plane", type: 2 },
-    { q: "노래하다", a: "sing", type: 2 },
-    { q: "의자", a: "chair", type: 2 },
-    { q: "별", a: "star", type: 2 },
-    { q: "반[학급]", a: "class", type: 2 },
-    { q: "만들다", a: "make", type: 2 },
-    { q: "어머니", a: "mother", type: 2 },
-    { q: "넥타이", a: "tie", type: 2 },
-    { q: "하나", a: "one", type: 2 },
-    { q: "몸", a: "body", type: 2 },
-    { q: "장갑", a: "glove", type: 2 },
-    { q: "낮", a: "day", type: 2 },
-    { q: "밤", a: "night", type: 2 },
-    { q: "햄버거", a: "hamburger", type: 2 },
-    { q: "갈색", a: "brown", type: 2 },
+    { q: "그리다", a: "draw", type: 2 },
+    { q: "왼쪽(의)", a: "left", type: 2 },
+    { q: "나쁜", a: "bad", type: 2 },
+    { q: "요리하다", a: "cook", type: 2 },
+    { q: "배부른", a: "full", type: 2 },
+    { q: "오른쪽(의)", a: "right", type: 2 },
+    { q: "날다", a: "fly", type: 2 },
+    { q: "추운", a: "cold", type: 2 },
+    { q: "젊은", a: "young", type: 2 },
+    { q: "공부하다", a: "study", type: 2 },
+    { q: "쉬다", a: "rest", type: 2 },
+    { q: "심다", a: "plant", type: 2 },
+    { q: "젖은, 축축한", a: "wet", type: 2 },
+    { q: "바람이 부는", a: "windy", type: 2 },
+    { q: "슬픈", a: "sad", type: 2 },
+    { q: "뚱뚱한", a: "fat", type: 2 },
+    { q: "주다", a: "give", type: 2 },
+    { q: "울다", a: "cry", type: 2 },
+    { q: "화가 난", a: "angry", type: 2 },
+    { q: "스케이트를 타다", a: "skate", type: 2 },
 
-    // 3유형: 문장+그림보고 맞추기 (이미지 O - 제한시간 20초)
-    { q: "My family loves to _______.", a: "travel", type: 3 },
-    { q: "Let's feel the fresh _______.", a: "air", type: 3 },
-    { q: "There is a dog _______ the chair.", a: "under", type: 3 },
+    // 3유형: 문장보고 맞추기 (이미지 O - 제한시간 20초)
+    { q: "Show me your _______.", a: "hand", type: 3 },
+    { q: "Let me introduce my _______.", a: "family", type: 3 },
     { q: "Open the _______, please.", a: "door", type: 3 },
-    { q: "I eat _______ for breakfast.", a: "bread", type: 3 },
+    { q: "Today is my _______.", a: "birthday", type: 3 },
+    { q: "My family loves to _______.", a: "travel", type: 3 },
     { q: "I _______ a gift to my friend.", a: "give", type: 3 },
-    { q: "Take your _______.", a: "coat", type: 3 },
-    { q: "Can I drink a _______ of milk?", a: "cup", type: 3 },
-    { q: "_______ your hands.", a: "clap", type: 3 },
-    { q: "She wants to be a ______.", a: "singer", type: 3 },
+    { q: "I eat _______ for breakfast.", a: "bread", type: 3 },
+    { q: "A glass of orange _______, please.", a: "juice", type: 3 },
+    { q: "_______ your hands.", a: "Clap", type: 3 },
+    { q: "Can you _______ the window?", a: "close", type: 3 },
   ];
 
   const allAnswerPool = rawData.map((d) => d.a);
 
   // -----------------------------
-  // 2. 최종 시험 문제 배열 생성 (경로 최적화)
+  // 2. 문제 배열 생성 (1유형과 3유형 이미지 경로 지정)
   // -----------------------------
   const questions = rawData.map((item) => {
     const wrongOnes = shuffle(
@@ -143,13 +143,14 @@ window.onload = function () {
       options: options,
       correctIndex: options.indexOf(item.a),
       type: item.type,
-      // 상대 경로 포맷 최적화 고정
-      img: item.type === 1 ? `/preStarter/img/${item.a}` : null,
+      // preStarter/img/ 경로 세팅
+      img:
+        item.type === 1 || item.type === 3 ? `preStarter/img/${item.a}` : null,
     };
   });
 
   // -----------------------------
-  // 3. 정답 테이블 동적 생성 (결과창 구조화)
+  // 3. 정답 테이블 동적 생성
   // -----------------------------
   const tbody = document.querySelector(".answer-table tbody");
   if (tbody) {
@@ -232,7 +233,6 @@ window.onload = function () {
     currentQuestion < questions.length ? renderQuestion() : finishExam();
   }
 
-  // 전체 화면 노출 상태 리셋 제어
   function finishExam() {
     if (countdownInterval) clearInterval(countdownInterval);
 
@@ -243,7 +243,7 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 5. 핵심: 문제 출력 및 이미지 체인 스위칭 로직
+  // 5. 문제 렌더링 및 이미지/텍스트 제어
   // -----------------------------
   function renderQuestion() {
     const q = questions[currentQuestion];
@@ -251,7 +251,6 @@ window.onload = function () {
 
     selectedIndex = null;
 
-    // 선택 효과 보정 초기화
     buttons.forEach((btn) => {
       if (btn) {
         btn.classList.remove("selected");
@@ -262,14 +261,15 @@ window.onload = function () {
 
     const imgTag = document.getElementById("questionImage");
 
-    // 이전 상태 이미지 경로 전면 소거 및 가림 처리
+    // 초기화: 이미지 무조건 안 보이게 감춤 (2유형 공간 차지 방지)
     if (imgTag) {
       imgTag.src = "";
       imgTag.onerror = null;
+      imgTag.onload = null;
       imgTag.style.display = "none";
     }
 
-    // 1유형 텍스트 잔상 소거 및 유형 제어
+    // 유형별 텍스트 출력 방식
     if (questionLabel) {
       if (q.type === 1) {
         questionLabel.innerHTML = "";
@@ -279,39 +279,28 @@ window.onload = function () {
       }
     }
 
-    // ------------------------------------------------===
-    //   이미지 로드
-    // ------------------------------------------------===
-    if (imgTag && q.img) {
-      imgTag.style.display = "block";
-
-      const extensions = [".jpg"];
+    // 1, 3유형 이미지 로딩 처리 (성공 시에만 display: block)
+    if ((q.type === 1 || q.type === 3) && imgTag && q.img) {
+      const extensions = [".jpg", ".png"];
       let extIndex = 0;
 
       function tryNextImage() {
         if (extIndex < extensions.length) {
           let nextSrc = "";
 
-          // 1. 로컬 라이브 서버 환경인 경우 (127.0.0.1 또는 localhost)
           if (
             window.location.hostname === "127.0.0.1" ||
             window.location.hostname === "localhost"
           ) {
-            // 주소창 바로 뒤에 preStarter가 붙음
             nextSrc =
               window.location.origin + "/" + q.img + extensions[extIndex];
-          }
-          // 2. 깃허브 Pages 등 실제 온라인 배포 서버 환경인 경우
-          else {
-            // 주소창 중간에 tosel2026 경로를 강제로 명시하여 조립함
+          } else {
             nextSrc =
               window.location.origin +
               "/tosel2026/" +
               q.img +
               extensions[extIndex];
           }
-
-          console.log(`[이미지 로드 시도] 주소: ${nextSrc}`); // 콘솔 확인용 로그
 
           extIndex++;
           imgTag.src = nextSrc;
@@ -321,6 +310,10 @@ window.onload = function () {
         }
       }
 
+      imgTag.onload = function () {
+        imgTag.style.display = "block";
+      };
+
       imgTag.onerror = tryNextImage;
       tryNextImage();
     }
@@ -328,7 +321,6 @@ window.onload = function () {
     const btnFive = document.querySelector(".five");
     if (btnFive) btnFive.style.display = "none";
 
-    // 보기 주입 (.opt-text 호환성 유지)
     q.options.forEach((opt, idx) => {
       const btn = buttons[idx];
       if (btn) {
@@ -341,7 +333,6 @@ window.onload = function () {
       }
     });
 
-    // 유형별 제한 시간 스펙 지정 (1유형: 10초 / 2유형: 15초 / 3유형: 20초)
     let duration = 10;
     if (q.type === 2) duration = 15;
     if (q.type === 3) duration = 20;
@@ -369,7 +360,7 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 6. 단축키 인터랙션 및 결과지 출력 (멀티 페이지)
+  // 6. 단축키 인터랙션 및 결과지 출력
   // -----------------------------
   const keyToIndex = { 1: 0, 2: 1, 3: 2, 4: 3 };
 
@@ -417,7 +408,6 @@ window.onload = function () {
 
     const element = document.querySelector(".answer-panel");
 
-    // 멀티 페이지 가로 누수 없는 PDF 인쇄 제어 모듈
     setTimeout(() => {
       html2canvas(element, { backgroundColor: "#ffffff", useCORS: true }).then(
         (canvas) => {
