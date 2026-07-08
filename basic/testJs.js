@@ -6,7 +6,7 @@ window.onload = function () {
   const studentNameValue = urlParams.get("studentName") || "이름 정보 없음";
 
   // -----------------------------
-  // 1. 원본 데이터 (각 데이터에 type 속성 직접 지정)
+  // 1. 원본 데이터 (Basic 단계 - 이미지 없음)
   // -----------------------------
   const rawData = [
     // 1유형 (뜻 맞추기 - 10초)
@@ -182,17 +182,17 @@ window.onload = function () {
       type: 3,
     },
     {
-      q: "____s by the nickname Assocer.\n Messi was very good at soccer,\n so a soccer ____ in Spain helped pay for his medicine.",
+      q: "Later, British school boys called the ____s by the nickname Assocer.\n Messi was very good at soccer,\n so a soccer ____ in Spain helped pay for his medicine.",
       a: "team",
       type: 3,
     },
     {
-      q: "You can hear his mother ____ing at him.\n His mother ____ed at him to stop, but he didn't listen.",
+      q: "And you can hear his mother ____ing at him.\n His mother ____ed at him to stop, but he didn't listen.",
       a: "yell",
       type: 3,
     },
     {
-      q: "a lion and kills many people in the ____.\n Then all the young men in the ____ will love me!",
+      q: "Leo is a lion and kills many people in the ____.\n Then all the young men in the ____ will love me!",
       a: "village",
       type: 3,
     },
@@ -212,17 +212,17 @@ window.onload = function () {
       type: 3,
     },
     {
-      q: "ars old, she couldn't do hard ____ anymore.\n His father ____ed in a factory, and his mother cleaned houses.",
+      q: "When she became 78 years old, she couldn't do hard ____ anymore.\n His father ____ed in a factory, and his mother cleaned houses.",
       a: "work",
       type: 3,
     },
     {
-      q: "ok a big drink from the cup, but it was ____ full.\n We ____ use his creative invention today.",
+      q: "He took a big drink from the cup, but it was ____ full.\n We ____ use his creative invention today.",
       a: "still",
       type: 3,
     },
     {
-      q: "eft home and worked for a wealthy family on their ____.\n The donkey decides to leave the ____.",
+      q: "At 12, she left home and worked for a wealthy family on their ____.\n The donkey decides to leave the ____.",
       a: "farm",
       type: 3,
     },
@@ -241,7 +241,6 @@ window.onload = function () {
 
   const allAnswers = rawData.map((item) => item.a);
 
-  // 최종 문제 배열 생성 (사지선다: 정답 1개 + 오답 3개)
   const questions = rawData.map((item) => {
     const wrongOptions = shuffle(allAnswers.filter((a) => a !== item.a)).slice(
       0,
@@ -253,7 +252,7 @@ window.onload = function () {
       options: options,
       correctIndex: options.indexOf(item.a),
       img: null,
-      type: item.type || 1, // rawData에서 지정한 type 사용 (없으면 기본값 1)
+      type: item.type || 1,
     };
   });
 
@@ -283,7 +282,7 @@ window.onload = function () {
         const titleTd = document.createElement("td");
         titleTd.id = "title-q" + n;
         titleTd.className = "question-title-cell";
-        titleTd.textContent = questions[n - 1].title;
+        titleTd.textContent = questions[n - 1].title.split("\n")[0];
         titleRow.appendChild(titleTd);
 
         const answerTd = document.createElement("td");
@@ -341,17 +340,14 @@ window.onload = function () {
     currentQuestion < questions.length ? renderQuestion() : finishExam();
   }
 
-  // 문제 결과에서 문제 영역 지우기
   function finishExam() {
     if (countdownInterval) clearInterval(countdownInterval);
 
-    // [수정] quiz-container 대신 헤더와 보기를 포함한 전체 영역(.test-panel-wrapper)을 숨기기
     const testPanel = document.querySelector(".test-panel-wrapper");
     if (testPanel) {
       testPanel.style.display = "none";
     }
 
-    // 시험 종료 문구 박스
     const examOverPanel = document.querySelector(".examOver");
     if (examOverPanel) {
       examOverPanel.style.display = "block";
@@ -359,27 +355,60 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 5. 문제 렌더링 및 답안 처리
+  // 5. 문제 렌더링 (Basic 전용 - 하단 레이아웃 완벽 정리)
   // -----------------------------
   function renderQuestion() {
     const q = questions[currentQuestion];
     if (!q) return;
 
     selectedIndex = null;
-    buttons.forEach((btn) => btn && btn.classList.remove("selected"));
-    if (questionLabel) questionLabel.innerHTML = q.title.replace(/\n/g, "<br>");
 
+    // 선택 해제
+    buttons.forEach((btn) => {
+      if (btn) {
+        btn.classList.remove("selected");
+        const chk = btn.querySelector(".check-icon");
+        if (chk) chk.remove();
+      }
+    });
+
+    // 기존 <img> 태그가 잔존해 있다면 완전히 삭제 (Basic은 이미지 사용 안 함)
+    let existingImg = document.getElementById("questionImage");
+    if (existingImg) {
+      existingImg.remove();
+    }
+
+    // [★ 핵심] 하단 돋보기/더하기 데코 영역 완전 삭제 (유령 공간 제거)
+    const footerDeco = document.querySelector(".card-footer-deco");
+    if (footerDeco) {
+      footerDeco.remove();
+    }
+
+    // 텍스트 출력
+    if (questionLabel) {
+      questionLabel.innerHTML = q.title.replace(/\n/g, "<br>");
+    }
+
+    // [★ 핵심] 보기 텍스트 안전하게 주입 (A, B, C, D 뱃지 파괴 방지)
     q.options.forEach((opt, idx) => {
-      if (buttons[idx]) buttons[idx].textContent = idx + 1 + ". " + opt;
+      const btn = buttons[idx];
+      if (btn) {
+        const textSpan = btn.querySelector(".opt-text");
+        if (textSpan) {
+          textSpan.textContent = opt;
+        } else {
+          btn.textContent = opt;
+        }
+      }
     });
 
     const btnFive = document.querySelector(".five");
     if (btnFive) btnFive.style.display = "none";
 
-    // 데이터에 기재된 type 속성에 맞춰 명확하게 시간 배정
-    let duration = 10; // 기본 1유형 10초
-    if (q.type === 2) duration = 15; // 2유형 15초
-    if (q.type === 3) duration = 20; // 3유형 20초
+    // 시간 배정
+    let duration = 10;
+    if (q.type === 2) duration = 15;
+    if (q.type === 3) duration = 20;
 
     startTimer(duration);
   }
@@ -422,15 +451,17 @@ window.onload = function () {
     if (idx !== undefined) {
       selectedIndex = idx;
       buttons.forEach((btn, i) => {
-        if (btn)
-          i === idx
-            ? btn.classList.add("selected")
-            : btn.classList.remove("selected");
+        if (btn) {
+          if (i === idx) {
+            btn.classList.add("selected");
+          } else {
+            btn.classList.remove("selected");
+          }
+        }
       });
     }
   });
 
-  // 클릭 차단 경고 (시험 중)
   document.addEventListener("click", (e) => {
     if (currentQuestion >= questions.length || e.target.closest(".resultOk"))
       return;
@@ -450,44 +481,32 @@ window.onload = function () {
     document.getElementById("result-correct").textContent = correctCount;
     document.getElementById("result-total").textContent = questions.length;
 
-    // PDF 자동 저장
-    // ------------------------------------------------===
-    // [수정] PDF 자동 저장 (결과창 전체가 잘림 없이 멀티 페이지로 저장됨)
-    // ------------------------------------------------===
     setTimeout(() => {
       const element = document.querySelector(".answer-panel");
 
-      // 배경색이 투명하게 밀리는 것을 방지하기 위해 백그라운드 지정
       html2canvas(element, { backgroundColor: "#ffffff", useCORS: true }).then(
         (canvas) => {
           const { jsPDF } = window.jspdf;
-
-          // A4 가로/세로 기본 규격 정보 설정 (단위: mm)
           const pdf = new jsPDF("p", "mm", "a4");
           const imgData = canvas.toDataURL("image/png");
 
-          const imgWidth = pdf.internal.pageSize.getWidth(); // A4 가로 너비 (210mm)
-          const pageHeight = pdf.internal.pageSize.getHeight(); // A4 세로 높이 (297mm)
-
-          // 픽셀 단위를 mm 단위 비율로 변환하여 캡처본의 실제 PDF 출력 높이 계산
+          const imgWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-          let heightLeft = imgHeight; // 출력하고 남은 높이
-          let position = 0; // Y축 출력 시작 위치
+          let heightLeft = imgHeight;
+          let position = 0;
 
-          // 첫 번째 페이지 이미지 주입
           pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
 
-          // 캡처 영역이 A4 한 장 높이보다 길면 반복해서 새 페이지를 만들고 이어 붙임
           while (heightLeft > 0) {
-            position = heightLeft - imgHeight; // 이전 페이지 끝단 위치로 좌표 이동
-            pdf.addPage(); // 새로운 A4 페이지 추가
+            position = heightLeft - imgHeight;
+            pdf.addPage();
             pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
             heightLeft -= pageHeight;
           }
 
-          // 파일명 날짜 지정 및 저장
           const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
           pdf.save(`${today}_${studentNameValue}_결과.pdf`);
         },
@@ -495,5 +514,5 @@ window.onload = function () {
     }, 500);
   };
 
-  renderQuestion(); // 첫 문제 시작
+  renderQuestion();
 };
