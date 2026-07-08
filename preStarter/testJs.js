@@ -281,7 +281,7 @@ window.onload = function () {
 
     // 1, 3유형 이미지 로딩 처리 (성공 시에만 display: block)
     if ((q.type === 1 || q.type === 3) && imgTag && q.img) {
-      const extensions = [".jpg", ".png"];
+      const extensions = [".jpg"];
       let extIndex = 0;
 
       function tryNextImage() {
