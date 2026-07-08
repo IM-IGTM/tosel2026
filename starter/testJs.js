@@ -292,7 +292,7 @@ window.onload = function () {
 
     // 3. 1유형 또는 3유형일 때만 동적으로 이미지 찾아서 <img> 생성
     if ((q.type === 1 || q.type === 3) && q.img) {
-      const extensions = [".jpg", ".png", ".JPG", ".PNG"];
+      const extensions = [".jpg"];
       let extIndex = 0;
 
       const tempImg = new Image();
