@@ -17,10 +17,10 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 1. 원본 데이터 (Pre-starter)
+  // 1. 원본 데이터 (Starter 기준)
   // -----------------------------
   const rawData = [
-    // 1유형: 그림보고 맞추기 (Part 1 데이터 - 제한시간 10초)
+    // 1유형: 그림보고 맞추기 (이미지 O - 제한시간 10초)
     { q: "유니폼, 단체복", a: "uniform", type: 1 },
     { q: "연주회, 콘서트", a: "concert", type: 1 },
     { q: "안경", a: "glasses", type: 1 },
@@ -92,10 +92,10 @@ window.onload = function () {
     { q: "역사", a: "history", type: 1 },
     { q: "쓰레기", a: "trash", type: 1 },
 
-    // 2유형: 뜻보고 맞추기 (Part 2 데이터 - 제한시간 15초)
+    // 2유형: 뜻보고 맞추기 (이미지 X - 제한시간 15초)
     { q: "~위에", a: "over", type: 2 },
     { q: "반복하다", a: "repeat", type: 2 },
-    { q: "시원한", a: "cool", type: 2 }, // 테이블 표기 그대로 반영 (추후 cool 등으로 수정 가능)
+    { q: "시원한", a: "cook", type: 2 },
     { q: "새로운", a: "new", type: 2 },
     { q: "(종이나 천을) 접다", a: "fold", type: 2 },
     { q: "언젠가", a: "someday", type: 2 },
@@ -114,7 +114,7 @@ window.onload = function () {
     { q: "친절한", a: "kind", type: 2 },
     { q: "전화하다, ~라고 부르다", a: "call", type: 2 },
 
-    // 3유형: 문장보고 맞추기 (Part 3 데이터 - 제한시간 20초)
+    // 3유형: 문장보고 맞추기 (이미지 O - 제한시간 20초)
     { q: "I have a runny nose and a sore _______.", a: "throat", type: 3 },
     { q: "She is a famous _______.", a: "singer", type: 3 },
     { q: "I'm _______ to see you.", a: "glad", type: 3 },
@@ -130,12 +130,20 @@ window.onload = function () {
   const allAnswerPool = rawData.map((d) => d.a);
 
   // -----------------------------
-  // 2. 최종 시험 문제 배열 생성 (경로 최적화)
+  // 2. 문제 배열 생성 (1유형과 3유형 둘 다 이미지 경로 생성)
   // -----------------------------
   const questions = rawData.map((item) => {
-    const wrongOnes = shuffle(
-      allAnswerPool.filter((ans) => ans !== item.a),
-    ).slice(0, 3);
+    // 기본 오답 후보군 (자기 자신 제외)
+    let wrongCandidatePool = allAnswerPool.filter((ans) => ans !== item.a);
+
+    // [★ 예외 처리] 정답이 "library"일 경우, 오답 후보에서 "textbook" 제거
+    if (item.a === "library") {
+      wrongCandidatePool = wrongCandidatePool.filter(
+        (ans) => ans !== "textbook",
+      );
+    }
+
+    const wrongOnes = shuffle(wrongCandidatePool).slice(0, 3);
     const options = shuffle([item.a, ...wrongOnes]);
 
     return {
@@ -143,13 +151,12 @@ window.onload = function () {
       options: options,
       correctIndex: options.indexOf(item.a),
       type: item.type,
-      // 상대 경로 포맷 최적화 고정
-      img: item.type === 1 ? `/starter/img/${item.a}` : null,
+      img: item.type === 1 || item.type === 3 ? `starter/img/${item.a}` : null,
     };
   });
 
   // -----------------------------
-  // 3. 정답 테이블 동적 생성 (결과창 구조화)
+  // 3. 정답 테이블 동적 생성
   // -----------------------------
   const tbody = document.querySelector(".answer-table tbody");
   if (tbody) {
@@ -232,7 +239,6 @@ window.onload = function () {
     currentQuestion < questions.length ? renderQuestion() : finishExam();
   }
 
-  // 전체 화면 노출 상태 리셋 제어
   function finishExam() {
     if (countdownInterval) clearInterval(countdownInterval);
 
@@ -243,7 +249,10 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 5. 핵심: 문제 출력 및 이미지 체인 스위칭 로직
+  // 5. 문제 렌더링 및 이미지/텍스트 제어
+  // -----------------------------
+  // -----------------------------
+  // 5. 문제 렌더링 및 이미지/텍스트 제어 (동적 생성/삭제 방식)
   // -----------------------------
   function renderQuestion() {
     const q = questions[currentQuestion];
@@ -251,7 +260,7 @@ window.onload = function () {
 
     selectedIndex = null;
 
-    // 선택 효과 보정 초기화
+    // 보기 버튼 선택 상태 초기화
     buttons.forEach((btn) => {
       if (btn) {
         btn.classList.remove("selected");
@@ -260,50 +269,45 @@ window.onload = function () {
       }
     });
 
-    const imgTag = document.getElementById("questionImage");
+    const quizContainer = document.querySelector(".quiz-container");
+    const questionLabel = document.getElementById("questionLabel");
 
-    // 이전 상태 이미지 경로 전면 소거 및 가림 처리
-    if (imgTag) {
-      imgTag.src = "";
-      imgTag.onerror = null;
-      imgTag.style.display = "none";
+    // 1. 기존에 존재하던 <img> 태그가 있다면 완벽히 삭제 (2유형 공간 100% 제거)
+    let existingImg = document.getElementById("questionImage");
+    if (existingImg) {
+      existingImg.remove();
     }
 
-    // 1유형 텍스트 잔상 소거 및 유형 제어
+    // 2. 유형별 텍스트 노출 처리
     if (questionLabel) {
       if (q.type === 1) {
+        // 1유형: 텍스트 숨김 (이미지만 출력)
         questionLabel.innerHTML = "";
         questionLabel.textContent = "";
       } else {
+        // 2, 3유형: 텍스트 문장/뜻 출력
         questionLabel.innerHTML = q.title.replace(/\n/g, "<br>");
       }
     }
 
-    // ------------------------------------------------===
-    //   이미지 로드
-    // ------------------------------------------------===
-    if (imgTag && q.img) {
-      imgTag.style.display = "block";
-
-      const extensions = [".jpg"];
+    // 3. 1유형 또는 3유형일 때만 동적으로 이미지 찾아서 <img> 생성
+    if ((q.type === 1 || q.type === 3) && q.img) {
+      const extensions = [".jpg", ".png", ".JPG", ".PNG"];
       let extIndex = 0;
+
+      const tempImg = new Image();
 
       function tryNextImage() {
         if (extIndex < extensions.length) {
           let nextSrc = "";
 
-          // 1. 로컬 라이브 서버 환경인 경우 (127.0.0.1 또는 localhost)
           if (
             window.location.hostname === "127.0.0.1" ||
             window.location.hostname === "localhost"
           ) {
-            // 주소창 바로 뒤에 starter가 붙음
             nextSrc =
               window.location.origin + "/" + q.img + extensions[extIndex];
-          }
-          // 2. 깃허브 Pages 등 실제 온라인 배포 서버 환경인 경우
-          else {
-            // 주소창 중간에 tosel2026 경로를 강제로 명시하여 조립함
+          } else {
             nextSrc =
               window.location.origin +
               "/tosel2026/" +
@@ -311,24 +315,35 @@ window.onload = function () {
               extensions[extIndex];
           }
 
-          console.log(`[이미지 로드 시도] 주소: ${nextSrc}`); // 콘솔 확인용 로그
-
           extIndex++;
-          imgTag.src = nextSrc;
-        } else {
-          imgTag.style.display = "none";
-          imgTag.onerror = null;
+          tempImg.src = nextSrc;
         }
       }
 
-      imgTag.onerror = tryNextImage;
+      // 이미지가 로드에 성공했을 때만 <img> 태그를 새로 생성하여 주입
+      tempImg.onload = function () {
+        const newImg = document.createElement("img");
+        newImg.id = "questionImage";
+        newImg.className = "question-img";
+        newImg.src = tempImg.src;
+        newImg.alt = "문제 이미지";
+
+        if (questionLabel) {
+          quizContainer.insertBefore(newImg, questionLabel);
+        } else {
+          quizContainer.appendChild(newImg);
+        }
+      };
+
+      tempImg.onerror = tryNextImage;
       tryNextImage();
     }
 
+    // 5번 버튼 숨김
     const btnFive = document.querySelector(".five");
     if (btnFive) btnFive.style.display = "none";
 
-    // 보기 주입 (.opt-text 호환성 유지)
+    // 보기 주입
     q.options.forEach((opt, idx) => {
       const btn = buttons[idx];
       if (btn) {
@@ -341,7 +356,7 @@ window.onload = function () {
       }
     });
 
-    // 유형별 제한 시간 스펙 지정 (1유형: 10초 / 2유형: 15초 / 3유형: 20초)
+    // 타이머 시간 세팅
     let duration = 10;
     if (q.type === 2) duration = 15;
     if (q.type === 3) duration = 20;
@@ -369,7 +384,7 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 6. 단축키 인터랙션 및 결과지 출력 (멀티 페이지)
+  // 6. 단축키 인터랙션 및 결과지 출력
   // -----------------------------
   const keyToIndex = { 1: 0, 2: 1, 3: 2, 4: 3 };
 
@@ -417,7 +432,6 @@ window.onload = function () {
 
     const element = document.querySelector(".answer-panel");
 
-    // 멀티 페이지 가로 누수 없는 PDF 인쇄 제어 모듈
     setTimeout(() => {
       html2canvas(element, { backgroundColor: "#ffffff", useCORS: true }).then(
         (canvas) => {

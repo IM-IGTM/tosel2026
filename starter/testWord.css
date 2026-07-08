@@ -92,17 +92,19 @@ body {
    3. 중앙 문제 카드 메인 박스 (학사 나오는 곳)
    =================================================== */
 .quiz-container {
-  background: #fff6ed; /* 실제 시험 느낌의 살구 베이지 톤 */
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  background-color: #fbf0e4;
+  border: 1px solid #f2dfce;
+
+  border-radius: 20px;
+  padding: 50px 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+
+  min-height: 140px; /* 가변 높이 유지 */
   position: relative;
-  min-height: 300px;
-  justify-content: space-between;
-  border: 1px solid #fed7aa;
+  transition: all 0.2s ease-in-out;
 }
 
 /* 상단 지시문 바 */
@@ -349,11 +351,13 @@ body {
   color: #b91c1c !important;
   font-weight: 700;
 }
-/* 문제 이미지 스타일 가이드 */
-.question-img {
-  max-width: 180px; /* 이미지 최대 가로 너비 설정 */
-  max-height: 180px; /* 이미지 최대 세로 높이 설정 */
-  object-fit: contain; /* 원본 비율을 깨뜨리지 않고 이쁘게 맞춤 */
-  margin: 15px 0 5px 0; /* 위아래 텍스트들과 부드러운 여백 정돈 */
-  border-radius: 12px; /* 이미지 모서리도 둥글둥글하게 통일 */
+
+/* 이미지가 생성되어 들어왔을 때만 적용되는 스타일 */
+.question-img,
+#questionImage {
+  max-width: 240%;
+  max-height: 240px;
+  object-fit: contain;
+  margin-bottom: 15px; /* 이미지 아래쪽 간격만 딱 잡아줌 */
+  display: block;
 }
