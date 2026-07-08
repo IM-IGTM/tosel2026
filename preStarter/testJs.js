@@ -123,7 +123,7 @@ window.onload = function () {
     { q: "I _______ a gift to my friend.", a: "give", type: 3 },
     { q: "I eat _______ for breakfast.", a: "bread", type: 3 },
     { q: "A glass of orange _______, please.", a: "juice", type: 3 },
-    { q: "_______ your hands.", a: "Clap", type: 3 },
+    { q: "_______ your hands.", a: "clap", type: 3 },
     { q: "Can you _______ the window?", a: "close", type: 3 },
   ];
 
