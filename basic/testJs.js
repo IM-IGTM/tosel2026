@@ -212,7 +212,7 @@ window.onload = function () {
       type: 3,
     },
     {
-      q: "When she became 78 years old, she couldn't do hard ____ anymore.\n His father ____ed in a factory, and his mother cleaned houses.",
+      q: "When she became 78 years old,\n she couldn't do hard ____ anymore.\n His father ____ed in a factory, and his mother cleaned houses.",
       a: "work",
       type: 3,
     },
