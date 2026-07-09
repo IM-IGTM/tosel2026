@@ -469,23 +469,48 @@ window.onload = function () {
   });
 
   window.resultOk = function () {
-    const pw = prompt("결과를 보려면 비밀번호를 입력하세요.");
-    if (pw !== "1234") {
-      alert("비밀번호가 틀렸습니다.");
-      return;
-    }
+    const modal = document.getElementById("pwModal");
+    const pwInput = document.getElementById("pwInput");
+    const confirmBtn = document.getElementById("pwConfirmBtn");
+    const cancelBtn = document.getElementById("pwCancelBtn");
 
-    document.querySelector(".examOver").style.display = "none";
-    document.querySelector(".answer-panel").style.display = "block";
-    document.getElementById("result-name").textContent = studentNameValue;
-    document.getElementById("result-correct").textContent = correctCount;
-    document.getElementById("result-total").textContent = questions.length;
+    if (!modal || !pwInput) return;
 
-    setTimeout(() => {
+    // 모달 초기화 및 열기
+    pwInput.value = "";
+    modal.style.display = "flex";
+    pwInput.focus();
+
+    // 확인 처리 함수
+    function handlePasswordSubmit() {
+      const pw = pwInput.value;
+
+      if (pw !== "1234") {
+        alert("비밀번호가 올바르지 않습니다.");
+        pwInput.value = "";
+        pwInput.focus();
+        return;
+      }
+
+      // 비밀번호가 일치하면 모달 닫기
+      modal.style.display = "none";
+      cleanupEvents();
+
+      // 결과 화면 전환 및 PDF 생성
+      document.querySelector(".examOver").style.display = "none";
+      document.querySelector(".answer-panel").style.display = "block";
+
+      document.getElementById("result-name").textContent = studentNameValue;
+      document.getElementById("result-correct").textContent = correctCount;
+      document.getElementById("result-total").textContent = questions.length;
+
       const element = document.querySelector(".answer-panel");
 
-      html2canvas(element, { backgroundColor: "#ffffff", useCORS: true }).then(
-        (canvas) => {
+      setTimeout(() => {
+        html2canvas(element, {
+          backgroundColor: "#ffffff",
+          useCORS: true,
+        }).then((canvas) => {
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF("p", "mm", "a4");
           const imgData = canvas.toDataURL("image/png");
@@ -507,11 +532,41 @@ window.onload = function () {
             heightLeft -= pageHeight;
           }
 
-          const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-          pdf.save(`${today}_${studentNameValue}_결과.pdf`);
-        },
-      );
-    }, 500);
+          const dateStr = new Date()
+            .toISOString()
+            .slice(0, 10)
+            .replace(/-/g, "");
+          pdf.save(`${dateStr}_${studentNameValue}_결과.pdf`);
+        });
+      }, 500);
+    }
+
+    // 취소 처리 함수
+    function handleCancel() {
+      modal.style.display = "none";
+      cleanupEvents();
+    }
+
+    // 엔터키 입력 지원
+    function handleKeyDown(e) {
+      if (e.key === "Enter") {
+        handlePasswordSubmit();
+      } else if (e.key === "Escape") {
+        handleCancel();
+      }
+    }
+
+    // 이벤트 리스너 정리
+    function cleanupEvents() {
+      confirmBtn.removeEventListener("click", handlePasswordSubmit);
+      cancelBtn.removeEventListener("click", handleCancel);
+      pwInput.removeEventListener("keydown", handleKeyDown);
+    }
+
+    // 이벤트 바인딩
+    confirmBtn.addEventListener("click", handlePasswordSubmit);
+    cancelBtn.addEventListener("click", handleCancel);
+    pwInput.addEventListener("keydown", handleKeyDown);
   };
 
   renderQuestion();
