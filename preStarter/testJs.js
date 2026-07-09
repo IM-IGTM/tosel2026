@@ -130,12 +130,19 @@ window.onload = function () {
   const allAnswerPool = rawData.map((d) => d.a);
 
   // -----------------------------
-  // 2. 문제 배열 생성 (1유형과 3유형 이미지 경로 지정)
+  // 2. 문제 배열 생성
   // -----------------------------
   const questions = rawData.map((item) => {
-    const wrongOnes = shuffle(
-      allAnswerPool.filter((ans) => ans !== item.a),
-    ).slice(0, 3);
+    let wrongCandidatePool = allAnswerPool.filter((ans) => ans !== item.a);
+
+    // [★ 예외 처리] library 정답 시 textbook 오답 방지
+    if (item.a === "library") {
+      wrongCandidatePool = wrongCandidatePool.filter(
+        (ans) => ans !== "textbook",
+      );
+    }
+
+    const wrongOnes = shuffle(wrongCandidatePool).slice(0, 3);
     const options = shuffle([item.a, ...wrongOnes]);
 
     return {
@@ -143,7 +150,6 @@ window.onload = function () {
       options: options,
       correctIndex: options.indexOf(item.a),
       type: item.type,
-      // preStarter/img/ 경로 세팅
       img:
         item.type === 1 || item.type === 3 ? `preStarter/img/${item.a}` : null,
     };
@@ -196,6 +202,8 @@ window.onload = function () {
   let timeLeft = 10;
   let countdownInterval = null;
   let correctCount = 0;
+  let isProcessing = false; // 연타 방지 플래그
+  let currentImageReqId = 0; // 비동기 이미지 중복 방지용 ID
 
   const questionLabel = document.getElementById("questionLabel");
   const buttons = [
@@ -243,7 +251,7 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 5. 문제 렌더링 및 이미지/텍스트 제어
+  // 5. 문제 렌더링 및 답안 처리 (비동기 겹침 방지 적용)
   // -----------------------------
   function renderQuestion() {
     const q = questions[currentQuestion];
@@ -251,6 +259,7 @@ window.onload = function () {
 
     selectedIndex = null;
 
+    // 보기 버튼 선택 상태 초기화
     buttons.forEach((btn) => {
       if (btn) {
         btn.classList.remove("selected");
@@ -259,17 +268,19 @@ window.onload = function () {
       }
     });
 
-    const imgTag = document.getElementById("questionImage");
+    const quizContainer = document.querySelector(".quiz-container");
+    const questionLabel = document.getElementById("questionLabel");
 
-    // 초기화: 이미지 무조건 안 보이게 감춤 (2유형 공간 차지 방지)
-    if (imgTag) {
-      imgTag.src = "";
-      imgTag.onerror = null;
-      imgTag.onload = null;
-      imgTag.style.display = "none";
+    // 1. 기존 이미지 즉시 제거 및 고유 ID 증가 (이전 이미지 주입 취소)
+    currentImageReqId++;
+    const myReqId = currentImageReqId;
+
+    let existingImg = document.getElementById("questionImage");
+    if (existingImg) {
+      existingImg.remove();
     }
 
-    // 유형별 텍스트 출력 방식
+    // 2. 텍스트 출력 처리
     if (questionLabel) {
       if (q.type === 1) {
         questionLabel.innerHTML = "";
@@ -279,12 +290,16 @@ window.onload = function () {
       }
     }
 
-    // 1, 3유형 이미지 로딩 처리 (성공 시에만 display: block)
-    if ((q.type === 1 || q.type === 3) && imgTag && q.img) {
-      const extensions = [".jpg"];
+    // 3. 1, 3유형 이미지 로딩 처리
+    if ((q.type === 1 || q.type === 3) && q.img) {
+      const extensions = [".jpg", ".png", ".JPG", ".PNG"];
       let extIndex = 0;
 
+      const tempImg = new Image();
+
       function tryNextImage() {
+        if (myReqId !== currentImageReqId) return;
+
         if (extIndex < extensions.length) {
           let nextSrc = "";
 
@@ -303,24 +318,39 @@ window.onload = function () {
           }
 
           extIndex++;
-          imgTag.src = nextSrc;
-        } else {
-          imgTag.style.display = "none";
-          imgTag.onerror = null;
+          tempImg.src = nextSrc;
         }
       }
 
-      imgTag.onload = function () {
-        imgTag.style.display = "block";
+      tempImg.onload = function () {
+        // 이미 다른 문제로 넘어간 경우 주입 취소 (이미지 겹침 해결)
+        if (myReqId !== currentImageReqId) return;
+
+        let oldImg = document.getElementById("questionImage");
+        if (oldImg) oldImg.remove();
+
+        const newImg = document.createElement("img");
+        newImg.id = "questionImage";
+        newImg.className = "question-img";
+        newImg.src = tempImg.src;
+        newImg.alt = "문제 이미지";
+
+        if (questionLabel) {
+          quizContainer.insertBefore(newImg, questionLabel);
+        } else {
+          quizContainer.appendChild(newImg);
+        }
       };
 
-      imgTag.onerror = tryNextImage;
+      tempImg.onerror = tryNextImage;
       tryNextImage();
     }
 
+    // 5번 버튼 숨김
     const btnFive = document.querySelector(".five");
     if (btnFive) btnFive.style.display = "none";
 
+    // 보기 주입
     q.options.forEach((opt, idx) => {
       const btn = buttons[idx];
       if (btn) {
@@ -333,6 +363,7 @@ window.onload = function () {
       }
     });
 
+    // 타이머 시간 배정
     let duration = 10;
     if (q.type === 2) duration = 15;
     if (q.type === 3) duration = 20;
@@ -341,13 +372,15 @@ window.onload = function () {
   }
 
   function handleAnswer(choiceIndex) {
+    if (isProcessing) return; // 연타 방지
+    isProcessing = true; // 잠금 설정
+
     const q = questions[currentQuestion];
     if (countdownInterval) clearInterval(countdownInterval);
 
-    const selectedText = q.options[choiceIndex];
     const qNum = currentQuestion + 1;
     const cell = document.getElementById("answer-q" + qNum);
-    if (cell) cell.textContent = selectedText;
+    if (cell) cell.textContent = q.options[choiceIndex];
 
     if (choiceIndex === q.correctIndex) {
       correctCount++;
@@ -356,11 +389,16 @@ window.onload = function () {
     }
 
     currentQuestion++;
-    currentQuestion < questions.length ? renderQuestion() : finishExam();
+
+    // 0.4초 딜레이 후 다음 문제 진입
+    setTimeout(() => {
+      isProcessing = false; // 잠금 해제
+      currentQuestion < questions.length ? renderQuestion() : finishExam();
+    }, 400);
   }
 
   // -----------------------------
-  // 6. 단축키 인터랙션 및 결과지 출력
+  // 6. 단축키 인터랙션 및 결과 모달
   // -----------------------------
   const keyToIndex = { 1: 0, 2: 1, 3: 2, 4: 3 };
 
@@ -400,12 +438,10 @@ window.onload = function () {
 
     if (!modal || !pwInput) return;
 
-    // 모달 초기화 및 열기
     pwInput.value = "";
     modal.style.display = "flex";
     pwInput.focus();
 
-    // 확인 처리 함수
     function handlePasswordSubmit() {
       const pw = pwInput.value;
 
@@ -416,11 +452,9 @@ window.onload = function () {
         return;
       }
 
-      // 비밀번호가 일치하면 모달 닫기
       modal.style.display = "none";
       cleanupEvents();
 
-      // 결과 화면 전환 및 PDF 생성
       document.querySelector(".examOver").style.display = "none";
       document.querySelector(".answer-panel").style.display = "block";
 
@@ -465,13 +499,11 @@ window.onload = function () {
       }, 500);
     }
 
-    // 취소 처리 함수
     function handleCancel() {
       modal.style.display = "none";
       cleanupEvents();
     }
 
-    // 엔터키 입력 지원
     function handleKeyDown(e) {
       if (e.key === "Enter") {
         handlePasswordSubmit();
@@ -480,14 +512,12 @@ window.onload = function () {
       }
     }
 
-    // 이벤트 리스너 정리
     function cleanupEvents() {
       confirmBtn.removeEventListener("click", handlePasswordSubmit);
       cancelBtn.removeEventListener("click", handleCancel);
       pwInput.removeEventListener("keydown", handleKeyDown);
     }
 
-    // 이벤트 바인딩
     confirmBtn.addEventListener("click", handlePasswordSubmit);
     cancelBtn.addEventListener("click", handleCancel);
     pwInput.addEventListener("keydown", handleKeyDown);
