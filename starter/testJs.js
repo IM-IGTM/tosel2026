@@ -130,13 +130,11 @@ window.onload = function () {
   const allAnswerPool = rawData.map((d) => d.a);
 
   // -----------------------------
-  // 2. 문제 배열 생성 (1유형과 3유형 둘 다 이미지 경로 생성)
+  // 2. 문제 배열 생성
   // -----------------------------
   const questions = rawData.map((item) => {
-    // 기본 오답 후보군 (자기 자신 제외)
     let wrongCandidatePool = allAnswerPool.filter((ans) => ans !== item.a);
 
-    // [★ 예외 처리] 정답이 "library"일 경우, 오답 후보에서 "textbook" 제거
     if (item.a === "library") {
       wrongCandidatePool = wrongCandidatePool.filter(
         (ans) => ans !== "textbook",
@@ -202,6 +200,8 @@ window.onload = function () {
   let timeLeft = 10;
   let countdownInterval = null;
   let correctCount = 0;
+  let isProcessing = false; // 연타 방지 플래그
+  let currentImageReqId = 0; // 이미지 비동기 요청 식별용 고유 ID
 
   const questionLabel = document.getElementById("questionLabel");
   const buttons = [
@@ -249,10 +249,7 @@ window.onload = function () {
   }
 
   // -----------------------------
-  // 5. 문제 렌더링 및 이미지/텍스트 제어
-  // -----------------------------
-  // -----------------------------
-  // 5. 문제 렌더링 및 이미지/텍스트 제어 (동적 생성/삭제 방식)
+  // 5. 문제 렌더링 및 답안 처리
   // -----------------------------
   function renderQuestion() {
     const q = questions[currentQuestion];
@@ -272,32 +269,35 @@ window.onload = function () {
     const quizContainer = document.querySelector(".quiz-container");
     const questionLabel = document.getElementById("questionLabel");
 
-    // 1. 기존에 존재하던 <img> 태그가 있다면 완벽히 삭제 (2유형 공간 100% 제거)
+    // 1. 기존 이미지 삭제 및 비동기 요청 식별 ID 증가
+    currentImageReqId++;
+    const myReqId = currentImageReqId;
+
     let existingImg = document.getElementById("questionImage");
     if (existingImg) {
       existingImg.remove();
     }
 
-    // 2. 유형별 텍스트 노출 처리
+    // 2. 텍스트 출력 방식 세팅
     if (questionLabel) {
       if (q.type === 1) {
-        // 1유형: 텍스트 숨김 (이미지만 출력)
         questionLabel.innerHTML = "";
         questionLabel.textContent = "";
       } else {
-        // 2, 3유형: 텍스트 문장/뜻 출력
         questionLabel.innerHTML = q.title.replace(/\n/g, "<br>");
       }
     }
 
-    // 3. 1유형 또는 3유형일 때만 동적으로 이미지 찾아서 <img> 생성
+    // 3. 1유형 또는 3유형 이미지 로딩
     if ((q.type === 1 || q.type === 3) && q.img) {
-      const extensions = [".jpg"];
+      const extensions = [".jpg", ".png", ".JPG", ".PNG"];
       let extIndex = 0;
 
       const tempImg = new Image();
 
       function tryNextImage() {
+        if (myReqId !== currentImageReqId) return;
+
         if (extIndex < extensions.length) {
           let nextSrc = "";
 
@@ -320,8 +320,12 @@ window.onload = function () {
         }
       }
 
-      // 이미지가 로드에 성공했을 때만 <img> 태그를 새로 생성하여 주입
       tempImg.onload = function () {
+        if (myReqId !== currentImageReqId) return;
+
+        let oldImg = document.getElementById("questionImage");
+        if (oldImg) oldImg.remove();
+
         const newImg = document.createElement("img");
         newImg.id = "questionImage";
         newImg.className = "question-img";
@@ -365,13 +369,15 @@ window.onload = function () {
   }
 
   function handleAnswer(choiceIndex) {
+    if (isProcessing) return; // 이미 처리 중이면 연타 무시
+    isProcessing = true; // 입력 잠금
+
     const q = questions[currentQuestion];
     if (countdownInterval) clearInterval(countdownInterval);
 
-    const selectedText = q.options[choiceIndex];
     const qNum = currentQuestion + 1;
     const cell = document.getElementById("answer-q" + qNum);
-    if (cell) cell.textContent = selectedText;
+    if (cell) cell.textContent = q.options[choiceIndex];
 
     if (choiceIndex === q.correctIndex) {
       correctCount++;
@@ -380,11 +386,16 @@ window.onload = function () {
     }
 
     currentQuestion++;
-    currentQuestion < questions.length ? renderQuestion() : finishExam();
+
+    // 0.4초 딜레이 후 다음 문제 전환
+    setTimeout(() => {
+      isProcessing = false; // 잠금 해제
+      currentQuestion < questions.length ? renderQuestion() : finishExam();
+    }, 400);
   }
 
   // -----------------------------
-  // 6. 단축키 인터랙션 및 결과지 출력
+  // 6. 단축키 인터랙션 및 결과 모달
   // -----------------------------
   const keyToIndex = { 1: 0, 2: 1, 3: 2, 4: 3 };
 
@@ -417,24 +428,44 @@ window.onload = function () {
   });
 
   window.resultOk = function () {
-    const pw = prompt("결과를 보려면 비밀번호를 입력하세요.");
-    if (pw !== "1234") {
-      alert("비밀번호가 올바르지 않습니다.");
-      return;
-    }
+    const modal = document.getElementById("pwModal");
+    const pwInput = document.getElementById("pwInput");
+    const confirmBtn = document.getElementById("pwConfirmBtn");
+    const cancelBtn = document.getElementById("pwCancelBtn");
 
-    document.querySelector(".examOver").style.display = "none";
-    document.querySelector(".answer-panel").style.display = "block";
+    if (!modal || !pwInput) return;
 
-    document.getElementById("result-name").textContent = studentNameValue;
-    document.getElementById("result-correct").textContent = correctCount;
-    document.getElementById("result-total").textContent = questions.length;
+    pwInput.value = "";
+    modal.style.display = "flex";
+    pwInput.focus();
 
-    const element = document.querySelector(".answer-panel");
+    function handlePasswordSubmit() {
+      const pw = pwInput.value;
 
-    setTimeout(() => {
-      html2canvas(element, { backgroundColor: "#ffffff", useCORS: true }).then(
-        (canvas) => {
+      if (pw !== "1234") {
+        alert("비밀번호가 올바르지 않습니다.");
+        pwInput.value = "";
+        pwInput.focus();
+        return;
+      }
+
+      modal.style.display = "none";
+      cleanupEvents();
+
+      document.querySelector(".examOver").style.display = "none";
+      document.querySelector(".answer-panel").style.display = "block";
+
+      document.getElementById("result-name").textContent = studentNameValue;
+      document.getElementById("result-correct").textContent = correctCount;
+      document.getElementById("result-total").textContent = questions.length;
+
+      const element = document.querySelector(".answer-panel");
+
+      setTimeout(() => {
+        html2canvas(element, {
+          backgroundColor: "#ffffff",
+          useCORS: true,
+        }).then((canvas) => {
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF("p", "mm", "a4");
           const imgData = canvas.toDataURL("image/png");
@@ -461,9 +492,32 @@ window.onload = function () {
             .slice(0, 10)
             .replace(/-/g, "");
           pdf.save(`${dateStr}_${studentNameValue}_결과.pdf`);
-        },
-      );
-    }, 500);
+        });
+      }, 500);
+    }
+
+    function handleCancel() {
+      modal.style.display = "none";
+      cleanupEvents();
+    }
+
+    function handleKeyDown(e) {
+      if (e.key === "Enter") {
+        handlePasswordSubmit();
+      } else if (e.key === "Escape") {
+        handleCancel();
+      }
+    }
+
+    function cleanupEvents() {
+      confirmBtn.removeEventListener("click", handlePasswordSubmit);
+      cancelBtn.removeEventListener("click", handleCancel);
+      pwInput.removeEventListener("keydown", handleKeyDown);
+    }
+
+    confirmBtn.addEventListener("click", handlePasswordSubmit);
+    cancelBtn.addEventListener("click", handleCancel);
+    pwInput.addEventListener("keydown", handleKeyDown);
   };
 
   renderQuestion();
