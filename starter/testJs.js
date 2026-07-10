@@ -95,7 +95,7 @@ window.onload = function () {
     // 2유형: 뜻보고 맞추기 (이미지 X - 제한시간 15초)
     { q: "~위에", a: "over", type: 2 },
     { q: "반복하다", a: "repeat", type: 2 },
-    { q: "시원한", a: "cook", type: 2 },
+    { q: "시원한", a: "cool", type: 2 },
     { q: "새로운", a: "new", type: 2 },
     { q: "(종이나 천을) 접다", a: "fold", type: 2 },
     { q: "언젠가", a: "someday", type: 2 },
